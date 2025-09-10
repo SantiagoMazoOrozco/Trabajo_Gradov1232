@@ -1,0 +1,21 @@
+{
+  "name": "synthetic_classification",
+  "generator": "sklearn.make_classification",
+  "params": {
+    "n_samples": 3000,
+    "n_features": 20,
+    "n_informative": 8,
+    "n_redundant": 4,
+    "weights": [
+      0.6,
+      0.4
+    ],
+    "class_sep": 1.4,
+    "flip_y": 0.01,
+    "random_state": 42
+  },
+  "rows": 3000,
+  "cols": 21,
+  "hash_sha256": "9969bedfaea6d914479d46de9abb98d96d4ba9e1a635e9d9606834ca094ed57a",
+  "created_utc": "2025-09-10T05:18:05Z"
+}
