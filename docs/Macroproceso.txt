@@ -1,0 +1,373 @@
+Macroproceso
+Proceso
+Título: Formato de registro de trabajo de grado
+Programa Curricular
+Administración de Sistemas
+Informáticos
+Fecha 10 7 2025
+Datos del estudiante
+Nombres: Santiago Apellidos: Mazo Orozco
+Tipo de identificación: T.I. C.C. X
+C.
+E.
+Número: 
+Correo institucional:smazoo@unal.edu.co Teléfono:3205271200
+Formulación Trabajo de Grado
+1. MODALIDAD/SUBMODALIDAD DE TRABAJO DE GRADO
+• Trabajos investigativos/Proyecto Final
+2. TÍTULO DEL TRABAJO DE GRADO
+Eficiencia y Sostenibilidad Computacional de Algoritmos de Machine Learning para la clasificación supervisada en Analítica de
+Datos: Un Enfoque Multiagente
+3. INTRODUCCIÓN Y JUSTIFICACIÓN
+En la actualidad, el crecimiento exponencial de los datos generados por sensores, plataformas digitales, redes sociales y sistemas corporativos
+ha sobrepasado la capacidad de las soluciones tradicionales de procesamiento, revelando limitaciones en escalabilidad, tolerancia a fallos y
+capacidad adaptativa. Este contexto plantea nuevos desafíos para el análisis eficiente de la información, especialmente en el ámbito del
+Machine Learning (ML), donde los algoritmos deben evaluarse no solo por su precisión, sino también por su eficiencia computacional y
+sostenibilidad energética.
+Los Sistemas Multiagente (SMA) emergen como una alternativa poderosa para enfrentar esta complejidad. Su arquitectura descentralizada, la
+autonomía de sus agentes, su capacidad de comunicación y su proactividad los convierten en herramientas versátiles para operar en entornos
+dinámicos y distribuidos. Esta investigación propone el uso de SMA como plataforma experimental para evaluar de forma controlada diversos
+algoritmos de ML, con énfasis en métricas clave de eficiencia y sostenibilidad.
+Esta propuesta se enfocará en un subconjunto representativo y contrastado, por ejemplo, algoritmos de Machine Learning supervisado de
+clasificación como Random Forest y Support Vector Machine, en fases específicas del ciclo de vida (como entrenamiento o inferencia, según el
+caso). Para ello, cada agente del sistema se especializará en una tarea del proceso, como la recolección de datos, el preprocesamiento, el
+entrenamiento del modelo, la evaluación de desempeño o la recolección de métricas. Esta distribución modular permite diseñar experimentos
+replicables, facilitar cambios en los algoritmos o condiciones, y obtener mediciones homogéneas bajo escenarios equivalentes.
+La evaluación se centrará en métricas computacionales concretas como el tiempo de ejecución (en milisegundos), el rendimiento del sistema
+(throughput), el uso promedio de CPU y memoria, y el consumo energético (normalizado por MB procesado). Para garantizar validez estadística,
+cada experimento se repetirá al menos diez veces bajo condiciones controladas, tanto en un sistema tradicional (grupo de control) como en la
+arquitectura basada en SMA (grupo de tratamiento). La medición se realizará mediante herramientas de monitoreo como JConsole o
+Código: Versión: 2 Página 1 de 9
+Macroproceso
+Proceso
+Título: Formato de registro de trabajo de grado
+Prometheus, y los resultados se analizarán con pruebas estadísticas inferenciales (por ejemplo, t-test con p < 0.05).
+Este enfoque experimental busca llenar un vacío identificado en la literatura: la ausencia de arquitecturas SMA generalizables que integren de
+manera sistemática todas las fases del procesamiento y evaluación de algoritmos de ML, considerando además la sostenibilidad computacional.
+Aunque existen investigaciones que han aplicado SMA a contextos específicos —como la clasificación de licitaciones (Kuzin et al., 2022),
+minería de datos distribuida (Braubach y Pokahr, 2019), o planificación en ciudades inteligentes (Paik, 2024)— ninguna de ellas integra
+simultáneamente criterios de eficiencia, adaptabilidad y sostenibilidad energética en un marco experimental homogéneo.
+La implementación de este enfoque, sin embargo, no está exenta de retos. Entre ellos destacan la complejidad del diseño y coordinación de los
+SMA, la necesidad de datos estructurados y gobernados, y la gestión ética del procesamiento algorítmico. También se reconocen
+preocupaciones como la privacidad de los datos, la dependencia tecnológica y el impacto ambiental del uso intensivo de recursos
+computacionales. Por tanto, se promueve un enfoque responsable que contemple principios como el “control humano significativo” y el “diseño
+ético por defecto”, asegurando que la tecnología se utilice de manera consciente y alineada con el bienestar colectivo.
+En síntesis, esta propuesta busca demostrar que los SMA no solo son útiles como arquitectura de procesamiento distribuido, sino también
+como herramienta científica para evaluar de forma rigurosa y sostenible algoritmos de ML en entornos simulados, homogéneos y controlados.
+4. OBJETIVO GENERAL
+Diseñar e implementar un prototipo de arquitectura basada en Sistemas Multiagente (SMA) para evaluar la eficiencia computacional y la
+sostenibilidad energética durante el entrenamiento de algoritmos de Machine Learning supervisado de clasificación, en entornos simulados
+de analítica de datos.
+5. OBJETIVOS ESPECÍFICOS
+1. Modelar la arquitectura de un prototipo de Sistema Multiagente (SMA) capaz de orquestar y gestionar fases clave del pipeline de
+Machine Learning (ML) supervisado de clasificación, incluyendo la ingesta, el preprocesamiento y la preparación de datos para el
+entrenamiento, en entornos simulados de analítica de datos.
+2. Implementar el prototipo de arquitectura SMA modelado, integrando al menos dos algoritmos representativos de ML supervisado
+de clasificación (por ejemplo, Random Forest y Support Vector Machine), para su ejecución durante la fase de entrenamiento,
+utilizando la plataforma JADE como entorno de gestión multiagente.
+3. Evaluar la eficiencia computacional y la sostenibilidad energética del prototipo SMA frente a una arquitectura centralizada
+tradicional, durante la fase de entrenamiento de los algoritmos seleccionados, mediante la medición de métricas como tiempo de
+ejecución, throughput, uso promedio de CPU y memoria, y consumo energético (normalizado en Joules por MB procesado) en
+escenarios simulados, controlados y replicables.
+4. Analizar e interpretar los resultados obtenidos de la evaluación cuantitativa, para validar la eficiencia y sostenibilidad del SMA, y
+sintetizar las principales implicaciones técnicas, éticas y operativas de su adopción en entornos de analítica de datos, identificando
+desafíos, limitaciones y oportunidades de mejora.
+6. ANTECEDENTES
+El Grupo de Investigación en Ambientes Inteligentes Adaptativos GAIA, en alianza con el Grupo de investigación ACSIC de la Universidad de
+Baleares ha incursionado en Green Computer, específicamente en los consumos generados por los algoritmos de inteligencia artificial y
+recientemente fue aprobada la ejecución de un Proyecto Internacional con la financiación de la Universidad española.
+Los Sistemas Multiagente (SMA) han emergido como una solución prometedora en diversos campos debido a su diseño descentralizado y su
+capacidad para que múltiples agentes inteligentes operen de manera autónoma y colaborativa. Estos sistemas son especialmente aptos para
+entornos dinámicos y complejos, lo que los hace relevantes para la analítica de grandes volúmenes de datos. Por ejemplo, en el ámbito de la
+gestión del riego agrícola, se ha demostrado que los modelos basados en agentes inteligentes pueden mejorar la eficiencia en el uso del agua al
+integrar inteligencia artificial, sistemas multiagente e internet de las cosas en el riego de precisión.
+Código: Versión: 2 Página 2 de 9
+Macroproceso
+Proceso
+Título: Formato de registro de trabajo de grado
+Rodriguez et al. (2024) presentan una revisión sistemática de herramientas y protocolos para medir consumo energético de modelos ML
+durante entrenamiento e inferencia, con comparaciones cualitativas y cuantitativas sobre tareas de visión y lenguaje. Un recurso reciente que
+mide el consumo energético de inferencia en servicios de IA generativa, demostrando que se pueden lograr ahorros de más del **40 % sin
+sacrificar funcionalidad mediante ajustes inteligentes (Chung et al., 2025). Yu et al.(2022) realizan estudio cuyo objetivo es explorar y
+comparar los niveles de eficiencia energética de los algoritmos de aprendizaje automático más utilizados -los algoritmos de regresión logística
+(LR), k-nearest neighbor, support vector machine, random forest (RF) y extreme gradient boosting (XGB), así como cuatro variantes diferentes
+de algoritmos de redes neuronales (NN)- cuando se aplican a conjuntos de datos de laboratorios clínicos.
+Esta propuesta se orienta a retomar algunos enfoques para construir una plataforma SMA experimental que: modulariza tareas
+(preprocesamiento, entrenamiento, evaluación, monitoreo de métricas), evalúa múltiples modelos ML midiendo CPU, memoria, throughput,
+tiempo de ejecución y consumo eléctrico; implementa métricas estandarizadas como Energy Efficiency Ratio, lifecycle emissions y
+environmental impact, basadas en frameworks existentes; establece escenarios homogéneos y replicables para comparaciones rigurosas y
+genera evidencia empírica sobre cómo los SMA facilitan la eficiencia energética en entornos de ML distribuido.
+La presente propuesta busca aprovechar un vacío en la literatura al aplicar agentes que permitan realizar evaluación integrada de eficiencia y
+sostenibilidad de modelos de ML en etapas completas del pipeline de analítica de datos.
+En cuanto a las métricas de sostenibilidad, el estudio se enfocará en la cuantificación directa del consumo de recursos computacionales durante
+el entrenamiento de los algoritmos de Machine Learning. Para ello, se utilizará la métrica de Joules por MB procesado, basándose en
+metodologías de cálculo de eficiencia energética.. La energía consumida se estimará a partir de la potencia promedio del CPU (en vatios) y el
+tiempo de ejecución (en segundos). Esta aproximación busca evaluar el impacto energético de los sistemas, considerando su relevancia en el
+contexto de la sostenibilidad tecnológica. Cabe señalar que, si bien la propuesta contempla métricas estandarizadas más amplias como
+'emisiones del ciclo de vida' e 'impacto ambiental', las fuentes no detallan explícitamente los frameworks específicos para su cuantificación
+directa en la metodología del estudio. Sin embargo, el componente cualitativo de la investigación sí abordará una reflexión profunda sobre las
+implicaciones ambientales, éticas y regulatorias de la Inteligencia Artificial y los centros de datos
+7. METODOLOGÍA
+● Enfoque Metodológico: Este estudio adoptará un enfoque metodológico puro, con una primacía cuantitativa complementada por
+una dimensión cualitativa, para abordar de manera integral el enfoque de los Sistemas Multiagente (SMA).
+● El componente cuantitativo se centrará en la recolección y análisis de datos numéricos para probar la hipótesis principal y
+establecer relaciones causales, buscando resultados cuantificables que permitan la generalización y comparación. Para ello, se
+clasificará como investigación aplicada, ya que busca generar una solución práctica y funcional. Adoptará un diseño experimental
+puro o cuasiexperimental para evaluar el efecto de la arquitectura multiagente sobre las variables dependientes bajo condiciones
+controladas o equivalentes. El objetivo es determinar el consumo de los algoritmos de Machine Learning en términos de tiempo y
+recursos bajo condiciones equivalentes .
+● El componente cualitativo será esencial para una comprensión integral de las profundas transformaciones y las implicaciones éticas
+y contextuales de la adopción de SMA. Este enfoque cualitativo interpretativo se realizará a través del análisis documental para
+examinar críticamente la eficacia, los desafíos y el contexto de implementación de los SMA, priorizando significados, dilemas y
+contextos sociotécnicos. Se buscará comprender cómo los actores construyen significados sobre fenómenos complejos,
+reconociendo que los datos están cargados de implicaciones sociales, culturales y organizacionales. Esto incluye la identificación de
+categorías clave, significados, dilemas y contextos sociotécnicos en la implementación de SMA, así como la evolución conceptual y
+tecnológica de la IA distribuida. El análisis de contenido temático será la técnica principal para identificar patrones discursivos,
+tensiones conceptuales y significados emergentes a partir de documentos académicos, industriales y regulatorios. Es importante
+señalar que en el enfoque cualitativo no se prueban hipótesis que se establezcan previamente, sino que estas se desarrollan a lo
+largo del propio trabajo conforme se recolecta la información. Además, no se basa en la estadística, sino en un análisis del discurso,
+y sus resultados no pueden generalizarse, ya que examina realidades subjetivas donde cada persona o sociedad visualiza la realidad
+de forma distinta, siendo necesaria la interpretación de esa realidad.
+● Operacionalización de Variables: A continuación, se detalla la operacionalización de variables para permitir su medición
+Código: Versión: 2 Página 3 de 9
+Macroproceso
+Proceso
+Título: Formato de registro de trabajo de grado
+cuantitativa:
+● Variable Independiente:
+○ Arquitectura centralizada (grupo de control).
+○ Sistema Multiagente (SMA) (grupo de tratamiento). Ambos sistemas serán evaluados bajo condiciones equivalentes para
+medir el efecto del tipo de arquitectura sobre las variables dependientes, generando escenarios de prueba controlados.
+● Variables Dependientes:
+○ Eficiencia del procesamiento de datos: Se medirá a través de:
+○ Tiempo total de ejecución (en milisegundos).
+○ Rendimiento del sistema (throughput) (en registros por milisegundo).
+○ Uso promedio de CPU (en porcentaje).
+○ Uso de memoria (en MB).
+○ Eficiencia por unidad de carga: Se evaluará la cantidad de datos correctamente procesados por segundo y por porcentaje
+de uso de CPU.
+○ Eficiencia por consumo de memoria: Se analizarán los datos procesados por MB utilizado
+● Eficiencia Energética (Green Computing): Se evaluará el consumo energétic. Esta dimensión es relevante para la sostenibilidad
+tecnológica y aborda el impacto ambiental asociado al uso de recursos informáticos intensivos. Se estimará el consumo energético
+(Joules por MB procesado), calculándolo a partir del consumo promedio de CPU (en vatios) y el tiempo de ejecución (en segundos),
+normalizándolo por unidad de datos procesados.
+● Adaptabilidad y Resiliencia: Se evaluará cómo los sistemas multiagente (SMA) reaccionan ante cambios y fallos, ya que una de sus
+características más poderosas es su capacidad de adaptarse en tiempo real y ser más resistentes a fallos individuales. Los SMA, al
+ser flexibles, permiten el intercambio de módulos o comportamientos, facilitando la evaluación de diferentes algoritmos o tareas .
+Las métricas incluyen:
+○ Tiempo de respuesta ante eventos dinámicos (en segundos).
+○ Tasa de éxito en reconfiguración autónoma (en porcentaje).
+○ Número de fallos recuperados automáticamente
+○ Eficiencia adaptativa: Se calculará el tiempo promedio de recuperación tras un fallo dividido por la cantidad de eventos
+adaptativos resueltos
+● Escalabilidad: Se medirá la capacidad del sistema para mantener sus métricas de eficiencia y rendimiento ante incrementos
+significativos en el volumen de datos. Los SMA son inherentemente flexibles y escalables, adaptándose a entornos cambiantes
+mediante la adición o modificación de agentes.
+8. CRONOGRAMA DE ACTIVIDADES
+Semanas de ejecución de cada actividad
+ACTIVIDADES A REALIZAR 1 2 3 4 5 6 7 8 9
+1
+0
+1
+1
+1
+2
+1
+3
+1
+4
+1
+5
+1
+6
+Actividad 1: Revisión de Literatura y Definición de Metodología. x x x
+Actividad 2: Diseño de la Arquitectura del SMA y del Experimento. x x x x
+Actividad 3: Implementación y Desarrollo de Prototipos. x x x x x
+Actividad 4: Recolección y Pre-procesamiento de Datos Experimentales. x x x x
+Actividad 5: Análisis e Interpretación de Datos. x x x x x
+Código: Versión: 2 Página 4 de 9
+Macroproceso
+Proceso
+Título: Formato de registro de trabajo de grado
+Actividad 6: Visualización de Hallazgos y Elaboración de Modelos. x x x x
+Actividad 7: Redacción del Reporte de Resultados. x x x x x
+Actividad 8: Consolidación de Conclusiones, Implicaciones y Trabajos Futuros. x x
+9. RESULTADOS ESPERADOS Y APORTE ESPECÍFICO
+● Desarrollo e Implementación de Prototipos de Software:
+○ Herramienta basada en agentes inteligentes para evaluación de desempeño
+○ Una versión funcional de la plataforma.
+○ Un prototipo multiagente que valide el modelo propuesto, incluyendo pruebas de desempeño cualitativo y cuantitativo.
+○ En caso de enfoques específicos un prototipo Multiagente desarrollado en la plataforma JADE para agilizar y automatizar
+los experimentos de evaluación de la eficiencia computacional y la sostenibilidad energética de algoritmos de Machine
+Learning, sirviendo como una plataforma experimental modular y replicable para la analítica de datos.
+○ La arquitectura completa del SMA propuesta, con la descripción de sus agentes y sus interacciones.
+● Evidencia de Datos y Análisis:
+○ Archivos de datos brutos (.csv) y scripts de Python utilizados para el procesamiento y análisis estadístico, asegurando la
+transparencia y replicabilidad.
+○ Gráficos comparativos (barras y líneas) generados en Python y Excel que ilustren las diferencias de desempeño entre las
+arquitecturas.
+○ Resultados empíricos detallados sobre la eficiencia (ej., tiempo de ejecución, rendimiento, consumo de recursos) y la
+adaptabilidad del SMA en comparación con modelos tradicionales.
+○ Análisis temático cualitativo que identifique categorías clave, significados, dilemas y contextos sociotécnicos en la
+implementación de SMAs.
+○ Modelos teóricos o conceptuales emergentes que describan patrones, tendencias y las interrelaciones entre categorías.
+○ Informes de validación y verificación de modelos (ej. grafos de alcanzabilidad, reportes estándar) que demuestren la
+solidez del diseño.
+● Documentación de la Investigación:
+○ Documentación detallada del procedimiento experimental y la metodología empleada.
+○ Capturas de pantalla o evidencia visual de la ejecución del sistema.
+○ Un reporte de resultados cualitativos que se caracterice por una exposición narrativa detallada, vívida y natural,
+empleando un estilo más personal y redactado en tiempo pasado. Se soportarán las categorías y temas emergentes con
+ejemplos concretos, incluyendo fragmentos de contenido o citas directas de las fuentes documentales, utilizando su
+lenguaje original para enriquecer la narración. Se recomendará el uso de ejemplos, anécdotas, metáforas y analogías para
+enriquecer la descripción. La presentación de los hallazgos incluirá elementos gráficos como modelos, tipologías,
+taxonomías, diagramas, tablas y matrices, para organizar y transmitir los resultados de manera efectiva. Además, se
+asegurará una triangulación de datos y fuentes cuando sea posible para establecer la dependencia y credibilidad de la
+investigación
+○ Una discusión de las limitaciones del estudio y sugerencias para futuras investigaciones. Esta sección incluirá una reflexión
+crítica sobre cómo la calidad, fuentes o tipos de datos, o el proceso analítico, pudieron haber influido en los resultados. Se
+discutirán posibles sesgos en la recolección o análisis de datos. Se considerarán las implicaciones para futuras
+investigaciones, políticas o prácticas, y se identificarán los dilemas o desafíos éticos encontrados, proponiendo sugerencias
+para futuros investigadores
+● Aporte Específico (Uso y Beneficios de los Resultados)Los resultados de la investigación contribuirán significativamente en varios
+Código: Versión: 2 Página 5 de 9
+Macroproceso
+Proceso
+Título: Formato de registro de trabajo de grado
+niveles:
+○ Avance del Conocimiento y la Metodología:
+○ Llenar un vacío en la literatura al proporcionar evidencia empírica y generalizable sobre la eficacia de los SMA en la
+integración de todas las fases del análisis de datos.
+○ Ofrecer un modelo de control inteligente que integre los paradigmas Holónico y Multiagente, validado con pruebas de
+desempeño.
+○ Desarrollar nuevos patrones de ataque o extracción distribuida de datos en ciberseguridad mediante SMAs, o mejorar los
+métodos existentes de extracción de información en entornos de seguridad.
+○ Acelerar el ritmo de la innovación al permitir a los investigadores diseñar y llevar a cabo experimentos, analizar datos y
+formular nuevas hipótesis de manera más eficiente.
+● Beneficios Industriales y Empresariales (Industria 4.0):
+○ Mejorar la eficiencia y la adaptabilidad del procesamiento de datos en entornos complejos y dinámicos, superando las
+limitaciones de las arquitecturas tradicionales.
+○ Optimizar los procesos de manufactura, lograr mayor flexibilidad, eficiencia y auto-gestión en fábricas inteligentes.
+○ Contribuir a la competitividad y supervivencia de Pequeñas y Medianas Empresas (PyMEs) al facilitar la adopción de
+tecnologías de la Industria 4.0.
+○ Permitir la consolidación de operaciones de negocio bajo una interfaz unificada basada en agentes de IA, mejorando la
+eficiencia y la calidad.
+○ Facilitar la gestión de cadenas de suministro, la optimización de inventarios, la previsión de demandas de clientes y la
+planificación logística en operaciones comerciales.
+•
+● Impacto Social y Ambiental:
+○ Contribuir a la sostenibilidad tecnológica mediante el análisis de la eficiencia energética de los sistemas multiagente.
+○ Mejorar la eficiencia en el uso del agua en la agricultura mediante modelos de agentes inteligentes, apoyando la
+sostenibilidad agrícola y la seguridad alimentaria.
+○ Potencialmente asistir en la predicción y prevención de enfermedades (ej. cáncer, epidemias) a través del análisis genético y
+la gestión de grandes conjuntos de datos.
+● Consideraciones Éticas y Regulatorias:
+○ Proporcionar evidencia para la reflexión regulatoria y filosófica sobre la autonomía de los Sistemas Multiagente (SMA) y la
+imperativa necesidad de un control humano significativo. Se abordará la tensión conceptual entre la autonomía técnica de
+los SMA y la indispensable supervisión institucional, reconociendo que estos sistemas han evolucionado de herramientas
+funcionales a fenómenos sociotécnicos que exigen una profunda reflexión regulatoria y filosófica.
+○ Informar el debate sobre la ética de la IA y sus implicaciones, con un enfoque particular en la prevención de sesgos
+algorítmicos y la responsabilidad humana en la toma de decisiones críticas. Se destacará el riesgo que implica delegar
+decisiones críticas a sistemas autónomos, como los Sistemas de Armas Autónomas Letales (LAWS), y se enfatizarán
+principios como el "control humano significativo" y el "diseño ético por defecto". Además, se analizarán los hallazgos de
+estudios que demuestran que los sistemas de IA pueden producir resultados discriminatorios y erróneos, como las
+diferencias en las tasas de error en el reconocimiento facial basadas en género y color de piel. Se contribuirá a un
+desarrollo más consciente y responsable de la tecnología, incluyendo la consideración del impacto ambiental de la IA y los
+centros de datos, así como la necesidad de marcos regulatorios y éticos claros y una supervisión humana continua.
+10. BIBLIOGRAFÍA CITADA
+● Braubach, L., & Pokahr, A. (2019). ActoDatA: A multi-agent architecture for data analytics. Multiagent and Grid Systems,
+15(3), 199–220.
+Código: Versión: 2 Página 6 de 9
+Macroproceso
+Proceso
+Título: Formato de registro de trabajo de grado
+● Chung Jae-Won and Jiachen Liu and Jeff J. Ma and Ruofan Wu and Oh Jun Kweon and Yuxuan Xia and Zhiyu Wu and
+Mosharaf Chowdhury. (2025). he ML.ENERGY Benchmark: Toward Automated Inference Energy Measurement and
+Optimization. Arvix, preprint.
+● Kuzin, A., Ivanov, D., & Petrova, M. (2022). Multi-agent systems for tender classification. Journal of Intelligent Systems,
+31(2), 123–137.
+● Paik, H. (2024). Smart city infrastructure: A multi-agent perspective. International Journal of Urban Computing, 12(1),
+45–59.
+● Rodriguez C., Laura Degioanni, Laetitia Kameni and Richard Vidal and Giovanni Neglia (2024). Evaluating the Energy
+Consumption of Machine Learning: Systematic Literature Review and Experiments. Eprint.
+● Yu JR, Chen CH, Huang TW, Lu JJ, Chung CR, Lin TW, Wu MH, Tseng YJ, Wang HY. Energy Efficiency of Inference
+Algorithms for Clinical Laboratory Data Sets: Green Artificial Intelligence Study. J Med Internet Res. 2022 Jan
+25;24(1):e28036. doi: 10.2196/28036. PMID: 35076405; PMCID: PMC8826151.
+11. REFERENCIAS BIBLIOGRÁFICAS ADICIONALES
+● De Grande, P., & Eguía, M. (2007). Modelos y teorías. Sistemas multiagente y mercado de trabajo. 8° Congreso Nacional
+de Estudios del Trabajo (ASET), Buenos Aires. (Útil para entender la construcción de modelos multiagente).
+● Focalx. (s.f.). La IA en los Sistemas Multiagente: Cómo interactúan y colaboran los agentes de IA. (Ofrece una visión
+general de la interacción y colaboración de agentes de IA).
+● González Pérez, J. L., & Martínez Miranda, M. A. (2018). Uso de sistemas multiagentes para el aprendizaje automático.
+Ciencia e Ingeniería, 19(2), 239-247. (Directamente relevante para el uso de SMA en Machine Learning).
+● IBM. (s.f.). ¿Qué es un sistema multiagente?. (Proporciona una definición y distinción entre sistemas monoagente y
+multiagente).
+● IEBS Business School. (2024). Qué son los agentes de IA y los sistemas multiagente. (Destaca los SMA como una
+innovación prometedora en GenAI para el sector empresarial).
+● KPMG. (s.f.). La IA multiagente revoluciona las operaciones de negocio. KPMG Tendencias. (Ofrece una perspectiva de la
+industria sobre los beneficios de los SMA en operaciones de negocio).
+● Portal ERP Colombia. (s.f.). Los sistemas multiagente están dando forma al futuro de la IA. (Visión sobre el impacto
+futuro de los SMA en la IA).
+● Red Hat. (2024). ¿Qué es la inteligencia artificial con agentes?. (Explica cómo la IA con agentes puede iniciar acciones y
+su relación con RAG).
+● Wooldridge, M. (2009). An Introduction to MultiAgent Systems. John Wiley & Sons Ltd. (Texto introductorio y
+fundamental en sistemas multiagente).
+● Bechara, A., Damasio, A. R., Tranel, D., & Damasio, H. (1997). Deciding advantageously before knowing the outcome:
+Neural correlates of somatic markers. Science, 275(5304), 129–132.
+● Damasio, A. R. (1996). Descartes' error: Emotion, reason, and the human brain. Avon Books.
+● Damasio, A. R. (1999). The feeling of what happens: Body and emotion in the making of consciousness. Harcourt Brace.
+● Ekman, P. (1971). Universals and cultural differences in facial expressions of emotion. Nebraska Symposium on
+Motivation, 19, 207–283.
+● Hodge, M. (2008). The interface between psychology and religion. Routledge.
+● Lucy, J. A. (1996). Language diversity and thought: A cognitive linguistic approach. Cambridge University Press.
+● Markus, H. R., & Kitayama, S. (1991). Culture and the self: Implications for cognition, emotion, and motivation.
+Psychological Review, 98(2), 224–253.
+● Rogoff, B. (1990). Apprenticeship in thinking: Cognitive development in social context. Oxford University Press.
+● Vargas, E. (2022, enero 28). Trabajos académicos: citas y referencias bibliográficas. Acento. Recuperado de
+https://acento.com.do/opinion/trabajos-academicos-citas-y-referencias-bibliograficas-9027747.htmlPatel et al. (2023).
+Next Generation of Multi-Agent Driven Smart City Applications and Research Paradigms. IEEE Access (IEEE) – Indexada
+en Scopus y Web of Science.
+Código: Versión: 2 Página 7 de 9
+Macroproceso
+Proceso
+Título: Formato de registro de trabajo de grado
+Aval del futuro director
+Nombre: Néstor Darío Duque M Unidad Académica Básica: Depto Informática y Computación
+Correo electrónico: ndduqueme@unal.edu.co Teléfono: 3007876574
+Firma:
+Nota: con la firma el profesor manifiesta que participó en la construcción de la propuesta y avala su presentación. Además, se
+compromete a realizar el proceso de acompañamiento durante el período académico inmediatamente siguiente.
+_____________________________
+Firma del estudiante
+
+# Análisis de cumplimiento del proyecto según el archivo Macroproceso
+
+Tu proyecto, según la descripción en Macroproceso.txt, está bien alineado con los objetivos y metodología planteados:
+
+- **Arquitectura multiagente modular en JADE:**  
+  ✔️ Tienes agentes para recolección, preprocesamiento, entrenamiento, evaluación, monitoreo y coordinación, como se requiere.
+
+- **Evaluación de algoritmos ML supervisados (Random Forest, SVM):**  
+  ✔️ El diseño contempla la integración y comparación de estos algoritmos en la fase de entrenamiento.
+
+- **Medición de eficiencia computacional y sostenibilidad energética:**  
+  ✔️ Se incluyen métricas como tiempo de ejecución, throughput, uso de CPU/memoria y consumo energético (Joules por MB procesado).
+
+- **Escenarios replicables y controlados (centralizado vs multiagente):**  
+  ✔️ El cronograma y metodología consideran la comparación entre arquitectura tradicional y SMA, con repetición de experimentos.
+
+- **Exportación de resultados para análisis en Python:**  
+  ✔️ Se especifica la generación de archivos CSV y el uso de scripts Python para análisis y visualización.
+
+- **Documentación y reporte:**  
+  ✔️ Se contempla la documentación técnica, capturas, análisis cualitativo y cuantitativo, y reporte de resultados.
+
+- **Aspectos éticos, ambientales y de sostenibilidad:**  
+  ✔️ El proyecto aborda la sostenibilidad tecnológica, el impacto ambiental y la ética en IA y SMA.
+
+- **Cronograma y resultados esperados:**  
+  ✔️ El cronograma cubre todas las fases: diseño, implementación, análisis, visualización y reporte.
+
+**Conclusión:**  
+Tu proyecto cumple con los requisitos y objetivos descritos en el Macroproceso.  
+Solo asegúrate de mantener la documentación, los scripts y los experimentos actualizados y bien organizados para facilitar la replicabilidad y el análisis.

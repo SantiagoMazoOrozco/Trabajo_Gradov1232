@@ -1,0 +1,37 @@
+# ==== Python ====
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+.venv/
+venv/
+.env
+
+# ==== Java / JADE ====
+*.class
+*.jar
+!libs/
+.target/
+target/
+
+# ==== OS / Editor ====
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# ==== Data (derivados) ====
+# Mantener solo raw (congelado). results y temporales se ignoran.
+data/results/
+**/tmp/
+
+# ==== Notebooks cache ====
+.ipynb_checkpoints/
+
+# ==== Otros ====
+coverage/
+.dist/
