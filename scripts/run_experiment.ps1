@@ -39,8 +39,9 @@ function Wait-For-Health {
 function Start-Api {
     Write-Host "Starting API server..."
     $env:PYTHONUNBUFFERED = "1"
-    $apiCmd = "uvicorn python-analysis.api.main:app --host 127.0.0.1 --port 8000 --log-level warning"
-    $script:apiProcess = Start-Process -FilePath powershell -ArgumentList "-NoProfile","-Command", $apiCmd -PassThru -WindowStyle Hidden
+    $py = Join-Path (Get-Location) ".venv\Scripts\python.exe"
+    if (-not (Test-Path $py)) { throw "Python venv not found at $py" }
+    $script:apiProcess = Start-Process -FilePath $py -ArgumentList "-m","uvicorn","python-analysis.api.main:app","--host","127.0.0.1","--port","8000","--log-level","warning" -PassThru -WindowStyle Hidden
 }
 
 function Stop-Api {
