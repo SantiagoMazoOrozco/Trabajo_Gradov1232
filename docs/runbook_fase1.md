@@ -116,6 +116,16 @@ python -c "import sklearn, psutil, fastapi; import sys; print(sys.version); prin
 - Consolidar métricas en un CSV/JSON de análisis (se recomienda crear un script de agregación en Fase 2).
 - Para comparaciones centralizado vs SMA, conservar el mismo `dataset`, `semillas` y `config`.
 
+### 7.1) Agregar múltiples corridas (CSV)
+Puedes consolidar métricas de entrenamiento/evaluación de todas las corridas en un CSV:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python .\python-analysis\aggregate_metrics.py --root data\results --output data\results\aggregate_metrics.csv
+```
+
+Esto genera `data/results/aggregate_metrics.csv` con filas por (experimento, etapa) que incluyen tiempo/cpu/mem (train) y accuracy/f1 (eval).
+
 ## 8) Limpieza
 - Para borrar resultados de una corrida: eliminar `data/results/<experimentId>/`.
 - El venv puede removerse eliminando `.venv/` (requerirá reinstalar dependencias después).
