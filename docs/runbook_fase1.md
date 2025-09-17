@@ -124,3 +124,12 @@ python -c "import sklearn, psutil, fastapi; import sys; print(sys.version); prin
 - Todos los tiempos en UTC ISO-8601.
 - El API usa puerto `127.0.0.1:8000`; ajusta si está ocupado.
 - Este runbook cubre una simulación E2E sin JADE; la integración con JADE vendrá en la siguiente etapa.
+
+## 10) Reporte HTML auto-contenido
+Genera un reporte listo para presentar (incluye resumen por etapa y la imagen de la línea de tiempo si existe):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -ExperimentId exp_rep_01 -Monitored -MonitorSeconds 180 -Report
+```
+
+El reporte se guarda en `data/results/<exp>/report/report.html`.

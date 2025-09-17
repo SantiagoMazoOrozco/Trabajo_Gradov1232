@@ -4,7 +4,8 @@ param(
     [switch]$HighPriority,
     [int]$AffinityMask,
     [switch]$Monitored,
-    [int]$MonitorSeconds = 180
+    [int]$MonitorSeconds = 180,
+    [switch]$Report
 )
 
 # Purpose: Start FastAPI server, wait for health, run simulation, and stop server.
@@ -108,6 +109,13 @@ try {
     python .\python-analysis\simulate_experiment.py $ExperimentId
 
     Write-Host "Done. Results at data/results/$ExperimentId"
+    if ($Report) {
+        try {
+            Write-Host "Generating HTML report..."
+            $py = Join-Path (Get-Location) ".venv\Scripts\python.exe"
+            & $py .\python-analysis\report_run.py $ExperimentId | Out-Host
+        } catch { Write-Warning "No se pudo generar el reporte: $_" }
+    }
 } finally {
     if ($Monitored -and $script:monProcess -and -not $script:monProcess.HasExited) {
         try { $script:monProcess.WaitForExit() } catch {}
