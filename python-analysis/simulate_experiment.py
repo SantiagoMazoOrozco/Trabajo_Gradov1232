@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import time
 from datetime import datetime
 
 API = "http://127.0.0.1:8000"
@@ -32,8 +33,18 @@ def run(exp_id: str = "exp_local_demo"):
     }
     prep_cfg = {"scale": True, "test_size": 0.2, "seed": 42}
     req = {"experimentId": exp_id, "conversationId": conv, "payload": {"dataRef": data_ref, "prepConfig": prep_cfg}}
-    r = requests.post(f"{API}/preprocess", json=req, timeout=60)
-    r.raise_for_status()
+    try:
+        r = requests.post(f"{API}/preprocess", json=req, timeout=60)
+        r.raise_for_status()
+    except Exception as e:
+        log_line(exp_id, "RETRY_PREPROCESS", {"agent": "PreprocessingAgent", "action": "preprocess", "error": str(e), "suggestion": "Verificar que el API esté levantado y el dataset exista."})
+        time.sleep(2)
+        try:
+            r = requests.post(f"{API}/preprocess", json=req, timeout=60)
+            r.raise_for_status()
+        except Exception as e2:
+            log_line(exp_id, "FAILURE_PREPROCESS", {"agent": "PreprocessingAgent", "action": "preprocess", "error": str(e2), "fatal": True})
+            raise
     prep = r.json()["payload"]["prepRef"]
     log_line(exp_id, "PREPROCESS_DONE", {
         "prepRef": prep,
@@ -57,8 +68,18 @@ def run(exp_id: str = "exp_local_demo"):
             "seed": 42,
         },
     }
-    r = requests.post(f"{API}/train", json=train_req, timeout=120)
-    r.raise_for_status()
+    try:
+        r = requests.post(f"{API}/train", json=train_req, timeout=120)
+        r.raise_for_status()
+    except Exception as e:
+        log_line(exp_id, "RETRY_TRAIN_RF", {"agent": "TrainingAgentRF", "action": "train", "error": str(e), "suggestion": "Validar hyperparams y que el prep haya generado datos."})
+        time.sleep(2)
+        try:
+            r = requests.post(f"{API}/train", json=train_req, timeout=120)
+            r.raise_for_status()
+        except Exception as e2:
+            log_line(exp_id, "FAILURE_TRAIN_RF", {"agent": "TrainingAgentRF", "action": "train", "error": str(e2), "fatal": True})
+            raise
     train_rf = r.json()["payload"]
     log_line(exp_id, "MODEL_TRAINED_RF", {
         **train_rf,
@@ -80,8 +101,18 @@ def run(exp_id: str = "exp_local_demo"):
             "evalSpec": {"metrics": ["accuracy", "f1"], "confusion_matrix": True},
         },
     }
-    r = requests.post(f"{API}/evaluate", json=eval_req, timeout=60)
-    r.raise_for_status()
+    try:
+        r = requests.post(f"{API}/evaluate", json=eval_req, timeout=60)
+        r.raise_for_status()
+    except Exception as e:
+        log_line(exp_id, "RETRY_EVAL_RF", {"agent": "EvaluationAgent", "action": "evaluate", "error": str(e), "suggestion": "Revisar que el modelo RF y los paths de test existan."})
+        time.sleep(2)
+        try:
+            r = requests.post(f"{API}/evaluate", json=eval_req, timeout=60)
+            r.raise_for_status()
+        except Exception as e2:
+            log_line(exp_id, "FAILURE_EVAL_RF", {"agent": "EvaluationAgent", "action": "evaluate", "error": str(e2), "fatal": True})
+            raise
     eval_rf = r.json()["payload"]
     log_line(exp_id, "EVAL_DONE_RF", {
         **eval_rf,
@@ -105,8 +136,18 @@ def run(exp_id: str = "exp_local_demo"):
             "seed": 42,
         },
     }
-    r = requests.post(f"{API}/train", json=train_req, timeout=120)
-    r.raise_for_status()
+    try:
+        r = requests.post(f"{API}/train", json=train_req, timeout=120)
+        r.raise_for_status()
+    except Exception as e:
+        log_line(exp_id, "RETRY_TRAIN_SVM", {"agent": "TrainingAgentSVM", "action": "train", "error": str(e), "suggestion": "Validar hyperparams SVM y datos de entrenamiento."})
+        time.sleep(2)
+        try:
+            r = requests.post(f"{API}/train", json=train_req, timeout=120)
+            r.raise_for_status()
+        except Exception as e2:
+            log_line(exp_id, "FAILURE_TRAIN_SVM", {"agent": "TrainingAgentSVM", "action": "train", "error": str(e2), "fatal": True})
+            raise
     train_svm = r.json()["payload"]
     log_line(exp_id, "MODEL_TRAINED_SVM", {
         **train_svm,
@@ -128,8 +169,18 @@ def run(exp_id: str = "exp_local_demo"):
             "evalSpec": {"metrics": ["accuracy", "f1"], "confusion_matrix": True},
         },
     }
-    r = requests.post(f"{API}/evaluate", json=eval_req, timeout=60)
-    r.raise_for_status()
+    try:
+        r = requests.post(f"{API}/evaluate", json=eval_req, timeout=60)
+        r.raise_for_status()
+    except Exception as e:
+        log_line(exp_id, "RETRY_EVAL_SVM", {"agent": "EvaluationAgent", "action": "evaluate", "error": str(e), "suggestion": "Revisar que el modelo SVM y los paths de test existan."})
+        time.sleep(2)
+        try:
+            r = requests.post(f"{API}/evaluate", json=eval_req, timeout=60)
+            r.raise_for_status()
+        except Exception as e2:
+            log_line(exp_id, "FAILURE_EVAL_SVM", {"agent": "EvaluationAgent", "action": "evaluate", "error": str(e2), "fatal": True})
+            raise
     eval_svm = r.json()["payload"]
     log_line(exp_id, "EVAL_DONE_SVM", {
         **eval_svm,

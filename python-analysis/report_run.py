@@ -145,6 +145,24 @@ def main():
         html += [f"<li><strong>{html_escape(g.get('stage'))}</strong> — Agente: {html_escape(g.get('agent') or '')} · Acción: {html_escape(g.get('action') or '')} · Detalles: {det} · ¿Por qué?: {why}</li>"]
     html += ['</ul>', '</div>']
 
+    # Incidents section
+    retries = [e for e in events_sorted if str(e.get('event','')).startswith('RETRY_')]
+    failures = [e for e in events_sorted if str(e.get('event','')).startswith('FAILURE_')]
+    if retries or failures:
+        html += ['<div class="card">', '<h2>Incidentes y acciones</h2>']
+        if retries:
+            html += ['<h3>Reintentos</h3>', '<ul>']
+            for e in retries:
+                sug = html_escape(e.get('suggestion') or '')
+                html += [f"<li>{html_escape(e.get('timestamp') or '')} · {html_escape(e.get('event') or '')} · {html_escape(e.get('error') or '')} · Sugerencia: {sug}</li>"]
+            html += ['</ul>']
+        if failures:
+            html += ['<h3>Fallas</h3>', '<ul>']
+            for e in failures:
+                html += [f"<li>{html_escape(e.get('timestamp') or '')} · {html_escape(e.get('event') or '')} · {html_escape(e.get('error') or '')}</li>"]
+            html += ['</ul>']
+        html += ['</div>']
+
     html += ['</body>', '</html>']
 
     with open(report_path, 'w', encoding='utf-8') as f:

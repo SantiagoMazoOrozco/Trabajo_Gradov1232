@@ -94,6 +94,10 @@ Si ya tienes el API corriendo, puedes lanzar el monitor manualmente:
 python .\python-analysis\monitor_run.py <ExperimentId> --duration 180 --interval 0.25
 ```
 
+Incidentes en la línea de tiempo:
+- Marcadores naranjas (R:) para `RETRY_*` y rojos (F:) para `FAILURE_*`.
+- Los reintentos también registran una sugerencia para resolver (visible en el reporte HTML).
+
 ## 5) Verificación de reproducibilidad
 - Verificar hash del dataset crudo:
 ```powershell

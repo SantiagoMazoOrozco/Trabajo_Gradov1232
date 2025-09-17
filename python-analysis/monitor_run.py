@@ -113,6 +113,20 @@ def main():
         except Exception:
             pass
 
+    # Incident markers: RETRY_* (orange), FAILURE_* (red)
+    for ev in evs:
+        ename = ev.get("event", "")
+        if not (ename.startswith("RETRY_") or ename.startswith("FAILURE_")):
+            continue
+        try:
+            ts = datetime.strptime(ev["timestamp"], "%Y-%m-%dT%H:%M:%SZ")
+            t = (ts - t0).total_seconds()
+            color = "orange" if ename.startswith("RETRY_") else "red"
+            ax1.scatter([t], [ax1.get_ylim()[1]*0.8], color=color, s=30, zorder=5)
+            ax1.text(t, ax1.get_ylim()[1]*0.78, ename.replace("RETRY_","R:").replace("FAILURE_","F:"), rotation=90, va='top', ha='right', fontsize=7, color=color)
+        except Exception:
+            pass
+
     fig.tight_layout()
     png_path = f"data/results/{exp}/monitor/timeline.png"
     fig.savefig(png_path, dpi=150)
