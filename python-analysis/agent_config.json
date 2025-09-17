@@ -1,0 +1,6 @@
+{
+  "PreprocessingAgent": "PreprocessingAgent",
+  "TrainingAgentRF": "TrainingAgentRF",
+  "TrainingAgentSVM": "TrainingAgentSVM",
+  "EvaluationAgent": "EvaluationAgent"
+}
