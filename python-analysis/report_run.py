@@ -73,6 +73,9 @@ def main():
             'start': s.get('timestamp') if s else None,
             'end': e.get('timestamp') if e else None,
             'metrics': metrics,
+            'agent': s.get('agent') if s else None,
+            'action': s.get('action') if s else None,
+            'why': e.get('why') if e else None,
         })
 
     # Build HTML
@@ -102,15 +105,18 @@ def main():
         f'<div class="muted">Generado: {datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")} (UTC)</div>',
         '<div class="card">',
         '<h2>Resumen por etapa</h2>',
-        '<table><thead><tr><th>Etapa</th><th>Inicio</th><th>Fin</th><th>Métricas</th></tr></thead><tbody>'
+        '<table><thead><tr><th>Etapa</th><th>Agente</th><th>Acción</th><th>Inicio</th><th>Fin</th><th>Métricas</th><th>Por qué</th></tr></thead><tbody>'
     ]
 
     for r in stage_rows:
         html.append('<tr>'
                     f'<td>{html_escape(r["stage"])}</td>'
+                    f'<td>{html_escape(r["agent"]) if r.get("agent") else ""}</td>'
+                    f'<td>{html_escape(r["action"]) if r.get("action") else ""}</td>'
                     f'<td>{html_escape(r["start"]) if r["start"] else ""}</td>'
                     f'<td>{html_escape(r["end"]) if r["end"] else ""}</td>'
                     f'<td>{html_escape(r["metrics"])}</td>'
+                    f'<td>{html_escape(r["why"]) if r.get("why") else ""}</td>'
                     '</tr>')
 
     html += ['</tbody></table>', '</div>']
