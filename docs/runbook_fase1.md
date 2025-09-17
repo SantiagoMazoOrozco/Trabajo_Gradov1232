@@ -45,6 +45,7 @@ Salidas esperadas:
 - `data/results/exp_local_demo/models/` modelos `rf.pkl` y `svm.pkl`.
 - `data/results/exp_local_demo/eval/confusion_matrix.csv`.
 - `data/results/exp_local_demo/logs/events.jsonl` con eventos JSON línea.
+ - (si monitoreas) `data/results/exp_local_demo/monitor/` con `timeline.csv` y `timeline.png`.
 
 ## 4) Ejecución automática (script PowerShell)
 Puedes usar el script `scripts/run_experiment.ps1` que:
@@ -74,6 +75,24 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -Experimen
 Notas:
 - `-Quiesce` llama a `scripts/quiesce_system.ps1` (pone plan de energía Alto/Ultimate, pausa OneDrive y detiene servicios no críticos si hay permisos). Luego `scripts/restore_system.ps1` revierte.
 - Sin permisos de administrador, se omiten detenciones de servicios y se te alertará; el resto del flujo continúa.
+
+## 6.1) Monitoreo y gráficas (CPU/Mem + eventos)
+Para correlacionar picos de CPU con eventos (p.ej., cuando empieza TRAIN_RF), ejecuta en modo monitoreado:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -ExperimentId exp_mon_01 -Monitored -MonitorSeconds 180
+```
+
+Esto genera:
+- `data/results/<exp>/monitor/timeline.csv` con muestreo de CPU total (%) y memoria del proceso API (MB)
+- `data/results/<exp>/monitor/timeline.png` con líneas verticales en PREPROCESS_START, TRAIN_RF_START, EVAL_RF_START, TRAIN_SVM_START, EVAL_SVM_START.
+
+Si ya tienes el API corriendo, puedes lanzar el monitor manualmente:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python .\python-analysis\monitor_run.py <ExperimentId> --duration 180 --interval 0.25
+```
 
 ## 5) Verificación de reproducibilidad
 - Verificar hash del dataset crudo:

@@ -20,6 +20,7 @@ def log_line(exp_id: str, event: str, payload: dict):
 
 def run(exp_id: str = "exp_local_demo"):
     # 1) Preprocess
+    log_line(exp_id, "PREPROCESS_START", {})
     conv = f"{exp_id}_prep_1"
     data_ref = {
         "path": "data/raw/synthetic_classification.csv",
@@ -33,6 +34,7 @@ def run(exp_id: str = "exp_local_demo"):
     log_line(exp_id, "PREPROCESS_DONE", {"prepRef": prep})
 
     # 2) Train RF
+    log_line(exp_id, "TRAIN_RF_START", {})
     conv = f"{exp_id}_train_rf_1"
     train_req = {
         "experimentId": exp_id,
@@ -50,6 +52,7 @@ def run(exp_id: str = "exp_local_demo"):
     log_line(exp_id, "MODEL_TRAINED_RF", train_rf)
 
     # 3) Evaluate RF
+    log_line(exp_id, "EVAL_RF_START", {})
     conv = f"{exp_id}_eval_rf_1"
     eval_req = {
         "experimentId": exp_id,
@@ -65,6 +68,7 @@ def run(exp_id: str = "exp_local_demo"):
     log_line(exp_id, "EVAL_DONE_RF", eval_rf)
 
     # 4) Train SVM
+    log_line(exp_id, "TRAIN_SVM_START", {})
     conv = f"{exp_id}_train_svm_1"
     train_req = {
         "experimentId": exp_id,
@@ -82,6 +86,7 @@ def run(exp_id: str = "exp_local_demo"):
     log_line(exp_id, "MODEL_TRAINED_SVM", train_svm)
 
     # 5) Evaluate SVM
+    log_line(exp_id, "EVAL_SVM_START", {})
     conv = f"{exp_id}_eval_svm_1"
     eval_req = {
         "experimentId": exp_id,

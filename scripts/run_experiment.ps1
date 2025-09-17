@@ -2,7 +2,9 @@ param(
     [string]$ExperimentId,
     [switch]$Quiesce,
     [switch]$HighPriority,
-    [int]$AffinityMask
+    [int]$AffinityMask,
+    [switch]$Monitored,
+    [int]$MonitorSeconds = 180
 )
 
 # Purpose: Start FastAPI server, wait for health, run simulation, and stop server.
@@ -93,11 +95,23 @@ try {
         Write-Host "API already running."
     }
 
+    # Start monitor if requested
+    if ($Monitored) {
+        try {
+            Write-Host "Starting monitor for $MonitorSeconds seconds..."
+            $py = Join-Path (Get-Location) ".venv\Scripts\python.exe"
+            $script:monProcess = Start-Process -FilePath $py -ArgumentList ".\python-analysis\monitor_run.py", $ExperimentId, "--duration", $MonitorSeconds -PassThru -WindowStyle Hidden
+        } catch { Write-Warning "No se pudo iniciar el monitor: $_" }
+    }
+
     Write-Host "Running simulation..."
     python .\python-analysis\simulate_experiment.py $ExperimentId
 
     Write-Host "Done. Results at data/results/$ExperimentId"
 } finally {
+    if ($Monitored -and $script:monProcess -and -not $script:monProcess.HasExited) {
+        try { $script:monProcess.WaitForExit() } catch {}
+    }
     if ($startedHere) { Stop-Api }
     if ($Quiesce) {
         try { & .\scripts\restore_system.ps1 } catch { Write-Warning "Restore falló: $_" }

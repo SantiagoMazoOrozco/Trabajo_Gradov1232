@@ -336,3 +336,8 @@ def evaluate(req: EvalRequest):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/pid")
+def pid():
+    return {"pid": os.getpid()}
