@@ -1,5 +1,8 @@
 param(
-    [string]$ExperimentId
+    [string]$ExperimentId,
+    [switch]$Quiesce,
+    [switch]$HighPriority,
+    [int]$AffinityMask
 )
 
 # Purpose: Start FastAPI server, wait for health, run simulation, and stop server.
@@ -42,6 +45,16 @@ function Start-Api {
     $py = Join-Path (Get-Location) ".venv\Scripts\python.exe"
     if (-not (Test-Path $py)) { throw "Python venv not found at $py" }
     $script:apiProcess = Start-Process -FilePath $py -ArgumentList "-m","uvicorn","python-analysis.api.main:app","--host","127.0.0.1","--port","8000","--log-level","warning" -PassThru -WindowStyle Hidden
+    Start-Sleep -Milliseconds 300
+    if ($HighPriority -and $script:apiProcess) {
+        try { (Get-Process -Id $script:apiProcess.Id).PriorityClass = 'High' } catch {}
+    }
+    if ($AffinityMask -and $script:apiProcess) {
+        try {
+            $proc = Get-Process -Id $script:apiProcess.Id
+            $proc.ProcessorAffinity = [intptr]$AffinityMask
+        } catch { Write-Warning "No se pudo establecer afinidad de CPU." }
+    }
 }
 
 function Stop-Api {
@@ -58,6 +71,9 @@ try {
     Write-Host "ExperimentId = $ExperimentId"
 
     Ensure-Venv
+    if ($Quiesce) {
+        try { & .\scripts\quiesce_system.ps1 } catch { Write-Warning "Quiesce falló: $_" }
+    }
 
     # Check if API already up
     $apiHealthy = $false
@@ -83,4 +99,7 @@ try {
     Write-Host "Done. Results at data/results/$ExperimentId"
 } finally {
     if ($startedHere) { Stop-Api }
+    if ($Quiesce) {
+        try { & .\scripts\restore_system.ps1 } catch { Write-Warning "Restore falló: $_" }
+    }
 }

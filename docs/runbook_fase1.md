@@ -62,6 +62,19 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -Experimen
 powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1
 ```
 
+Opciones de aislamiento:
+```powershell
+# Quiesce del sistema antes y restauración después (requiere admin para detener algunos servicios)
+powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -ExperimentId exp_demo_02 -Quiesce
+
+# También puedes fijar prioridad alta y afinidad de CPU del proceso API (ej. usar solo CPU 0 y 1)
+powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -ExperimentId exp_demo_03 -HighPriority -AffinityMask 0x3
+```
+
+Notas:
+- `-Quiesce` llama a `scripts/quiesce_system.ps1` (pone plan de energía Alto/Ultimate, pausa OneDrive y detiene servicios no críticos si hay permisos). Luego `scripts/restore_system.ps1` revierte.
+- Sin permisos de administrador, se omiten detenciones de servicios y se te alertará; el resto del flujo continúa.
+
 ## 5) Verificación de reproducibilidad
 - Verificar hash del dataset crudo:
 ```powershell
