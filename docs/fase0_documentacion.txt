@@ -1,0 +1,94 @@
+Fase 0 – Preparación de la Plataforma SMA para Orquestación de Experimentos de ML
+=================================================================
+
+1. Objetivo de la Fase 0
+Establecer una base reproducible: estructura de carpetas, control de versiones, dataset congelado y plantillas documentales para soportar fases futuras (agentes JADE y experimentación controlada).
+
+2. Alcance
+INCLUYE: estructura repositorio, Git inicial, dataset sintético + metadatos, toolchain documentado, plantilla diseño experimental, catálogo de datasets.
+EXCLUYE: implementación de agentes, protocolo ACL completo, ejecución de experimentos de rendimiento.
+
+3. Estructura del Repositorio
+/baseline              Referencias o prototipos comparativos
+/jade-platform         Código futuro de agentes JADE (Java)
+/python-analysis       Scripts Python (dataset, entrenamiento, métricas)
+/data/raw              Datasets congelados (CSV + .meta.json)
+/data/results          Resultados experimentales derivados (ignorado por Git)
+/docs                  Documentación (toolchain, diseño experimental, catálogo, notas)
+
+4. Archivos Clave Creados
+.gitignore                      Reglas para excluir artefactos (caches, resultados, entornos)
+README.md                       Resumen del proyecto y estructura
+requirements.txt                Dependencias reproducibles (scikit-learn, pandas, psutil)
+docs/toolchain.md               Versiones objetivo (JDK 17, JADE 4.5.x, Python 3.11.x, sklearn 1.5.1)
+docs/experiment-design.md       Plantilla de diseño experimental (RQ, variables, tratamientos, logs)
+docs/dataset-catalog.md         Catálogo central de datasets congelados
+python-analysis/generate_dataset.py  Script determinista para generar dataset sintético y metadatos
+
+5. Dataset Sintético Inicial
+Generado con sklearn.make_classification con parámetros:
+n_samples=3000, n_features=20 (8 informativas, 4 redundantes), weights=[0.6,0.4], class_sep=1.4, flip_y=0.01, random_state=42.
+Archivos resultantes:
+- data/raw/synthetic_classification.csv
+- data/raw/synthetic_classification.meta.json (incluye hash SHA-256, parámetros y timestamp)
+Justificación: rapidez de iteración, control estadístico, reproducibilidad garantizada (semilla + hash).
+
+6. Metadatos y Hash
+La estrategia de integridad se basa en almacenar un hash SHA-256 del CSV. Cualquier alteración del archivo obliga a registrar nueva versión (inmutabilidad lógica de /data/raw).
+
+7. Toolchain / Versionado
+Versiones fijadas para reducir variabilidad experimental:
+- Python (recomendado 3.11.x; detectado 3.13.7 localmente pero estable para dependencias actuales)
+- scikit-learn 1.5.1
+- psutil 5.9.8
+- JDK 17 (pendiente de instalación para JADE en Fase 1)
+- JADE 4.5.x (descarga futura)
+
+8. Control de Ejecución (PowerShell Execution Policy)
+Se aplicó Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass para permitir activar el entorno virtual sin cambiar políticas globales permanentes.
+
+9. Estrategia de Reproducibilidad
+- Semilla fija random_state=42
+- Hash SHA-256 de dataset
+- requirements.txt con versiones exactas
+- Separación raw (inmutable) vs results (derivado e ignorado)
+- Tag Git `fase-0` como snapshot estable
+
+10. Política de Commits / Tag
+Commits representativos:
+- chore: fase 0 estructura inicial y documentación base
+- feat(data): agrega dataset sintético congelado
+Tag: fase-0 (marca fin de la preparación)
+
+11. Plantilla Experimental (Resumen de Campos)
+Variables independientes: modelo, n_estimators, kernel, batch_size, concurrency.
+Variables dependientes: accuracy, f1, train_time, cpu_usage, mem_peak.
+Controladas: semilla, dataset, hardware.
+Formato de log previsto (JSON línea): timestamp, experimentId, treatment, agent, event, metrics.
+
+12. Riesgos Identificados y Mitigación
+- Variabilidad de versiones → fijar requirements y toolchain
+- Corrupción accidental de dataset → hash + política inmutable
+- Ruido en repo por resultados → ignorar data/results
+- Desalineación de fases → plantilla experimental anticipada
+
+13. Próximos Pasos (Fase 1)
+- Definir agentes: Orchestrator, DataIngestion, Preprocessing, TrainingRF, TrainingSVM, Evaluation, Metrics, Export
+- Especificar para cada agente: propósito, inputs, outputs (performative), eventos
+- Definir protocolo ACL (REQUEST/INFORM/FAILURE) con campos estándar (experimentId, batchId, payloadType, timestamp)
+- Crear skeleton JADE y pruebas de mensajería básicas
+
+14. Justificación Global de Decisiones
+- Dataset sintético inicial → elimina dependencias externas y permite validar arquitectura antes de tuning.
+- Hash + metadatos → soporte a auditoría y replicación académica.
+- Tag temprano → baseline comparativa (overhead multi-agente vs ejecución secuencial futura).
+- Plantilla anticipada → reduce retrabajo documental y mejora disciplina experimental.
+
+15. Reproducción Rápida (Resumen Secuencial)
+1. git clone <repo>
+2. python -m venv .venv
+3. Activar entorno y pip install -r requirements.txt
+4. Verificar hash CSV vs meta.json
+5. Usar tag fase-0 como punto de partida experimental
+
+FIN FASE 0

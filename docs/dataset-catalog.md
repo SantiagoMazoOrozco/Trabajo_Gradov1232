@@ -2,7 +2,7 @@
 
 | Nombre | Archivo | Tipo | Fuente / Generador | Hash (SHA-256) | Filas | Columnas | Notas |
 |--------|---------|------|--------------------|----------------|-------|----------|-------|
-| (pendiente) | (pendiente) | sintético/público | sklearn.make_classification / URL | (pendiente) | - | - | Inicial |
+| synthetic_classification | synthetic_classification.csv | sintético | sklearn.make_classification | 9969bedfaea6d914479d46de9abb98d96d4ba9e1a635e9d9606834ca094ed57a | 3000 | 21 | Dataset inicial |
 
 ## Procedimiento de Registro
 1. Colocar archivo crudo en `data/raw/`.

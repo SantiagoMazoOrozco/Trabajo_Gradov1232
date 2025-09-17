@@ -1,0 +1,70 @@
+Comandos Clave Fase 0
+=====================
+
+--- GIT (Configuración e Inicialización) ---
+# Configurar identidad global
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu.email@dominio.com"
+git config --global core.autocrlf true
+
+# Inicializar repositorio y primer commit
+git init
+git add .
+git commit -m "chore: fase 0 estructura inicial y documentación base"
+git branch -M main
+
+# Añadir dataset y crear commit de datos
+git add data/raw/synthetic_classification.csv data/raw/synthetic_classification.meta.json docs/dataset-catalog.md
+git commit -m "feat(data): agrega dataset sintético congelado"
+
+# Crear tag de hito
+git tag -a fase-0 -m "Completa Fase 0"
+# Listar tags
+git tag
+
+# (Opcional) Agregar remoto y hacer push
+git remote add origin https://github.com/<usuario>/<repo>.git
+git push -u origin main --tags
+
+--- ENTORNO PYTHON ---
+# Crear entorno virtual (usa versión por defecto; recomendable Python 3.11 si instalada)
+python -m venv .venv
+
+# Si PowerShell bloquea scripts (activar temporalmente)
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+# Activar entorno (PowerShell)
+.\.venv\Scripts\Activate.ps1
+
+# Actualizar pip e instalar dependencias
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Verificar librerías
+python -c "import sklearn, psutil; print(sklearn.__version__, psutil.__version__)"
+
+--- GENERACIÓN DATASET SINTÉTICO ---
+# Ejecutar script de generación
+python .\python-analysis\generate_dataset.py
+
+# Verificar hash SHA-256 manualmente
+Get-FileHash -Algorithm SHA256 .\data\raw\synthetic_classification.csv
+
+--- VERIFICACIONES ADICIONALES ---
+# Mostrar configuración git global
+git config --list --global
+
+# Confirmar archivos añadidos en staging
+git status
+
+--- LIMPIEZA / RESET BÁSICO ---
+# Deshacer cambios no staged
+git checkout -- <archivo>
+
+# Quitar archivo del staging sin perder cambios
+git reset <archivo>
+
+--- NOTAS ---
+- Mantén /data/raw inmutable; cualquier cambio => nuevo nombre + nuevo hash.
+- /data/results permanece fuera de control de versiones (ignorados en .gitignore).
+- Tag `fase-0` marca el snapshot reproducible inicial.
