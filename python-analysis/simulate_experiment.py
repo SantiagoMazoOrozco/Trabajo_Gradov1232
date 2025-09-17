@@ -101,4 +101,6 @@ def run(exp_id: str = "exp_local_demo"):
 
 
 if __name__ == "__main__":
-    run()
+    import sys
+    exp = sys.argv[1] if len(sys.argv) > 1 else "exp_local_demo"
+    run(exp)

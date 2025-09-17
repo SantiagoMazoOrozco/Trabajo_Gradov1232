@@ -38,6 +38,28 @@ Se generará (o descargará) y se almacenará en `data/raw` junto a su archivo `
 - Fase 1: Modelado de agentes (Orchestrator, DataIngestion, Preprocessing, TrainingRF, TrainingSVM, Evaluation, Metrics, Export) + protocolo de mensajes.
 - Fase 2: Implementación incremental y pruebas de comunicación ACL.
 
+## Fase 1 – Cómo ejecutar en entorno controlado
+Consulta el runbook detallado en `docs/runbook_fase1.md`.
+
+Atajo automático (PowerShell):
+```
+powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -ExperimentId exp_demo_01
+```
+
+Manual (dos terminales):
+```
+.\.venv\Scripts\Activate.ps1
+uvicorn python-analysis.api.main:app --host 127.0.0.1 --port 8000 --log-level warning
+```
+
+En otra terminal:
+```
+.\.venv\Scripts\Activate.ps1
+python .\python-analysis\simulate_experiment.py
+```
+
+Resultados esperados en `data/results/<experimentId>/` (prep, models, eval, logs).
+
 ## Reproducir Entorno Python
 (Ver también `requirements.txt` y `docs/toolchain.md`)
 ```
