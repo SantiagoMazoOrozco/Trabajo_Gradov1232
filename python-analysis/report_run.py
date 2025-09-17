@@ -58,6 +58,7 @@ def main():
         return next((e for e in events_sorted if e.get('event') == name), None)
 
     stage_rows = []
+    glossary_items = []
     for label, start_ev, end_ev in stages:
         s = find_event(start_ev)
         e = find_event(end_ev)
@@ -75,6 +76,15 @@ def main():
             'metrics': metrics,
             'agent': s.get('agent') if s else None,
             'action': s.get('action') if s else None,
+            'why': e.get('why') if e else None,
+        })
+        # Build glossary entry
+        details = s.get('details') if s else None
+        glossary_items.append({
+            'stage': label,
+            'agent': s.get('agent') if s else None,
+            'action': s.get('action') if s else None,
+            'details': details,
             'why': e.get('why') if e else None,
         })
 
@@ -126,6 +136,14 @@ def main():
                  f'<img alt="timeline" style="max-width:100%" src="{timeline_data}"/>', '</div>']
     else:
         html += ['<div class="card muted">No se encontró timeline.png. Ejecuta en modo monitoreado.</div>']
+
+    # Glossary section
+    html += ['<div class="card">', '<h2>Glosario de porqués y decisiones</h2>', '<ul>']
+    for g in glossary_items:
+        det = html_escape(json.dumps(g.get('details'), ensure_ascii=False)) if g.get('details') else ''
+        why = html_escape(g.get('why')) if g.get('why') else ''
+        html += [f"<li><strong>{html_escape(g.get('stage'))}</strong> — Agente: {html_escape(g.get('agent') or '')} · Acción: {html_escape(g.get('action') or '')} · Detalles: {det} · ¿Por qué?: {why}</li>"]
+    html += ['</ul>', '</div>']
 
     html += ['</body>', '</html>']
 

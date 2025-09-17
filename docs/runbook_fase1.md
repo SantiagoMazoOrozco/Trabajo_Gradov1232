@@ -133,3 +133,4 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -Experimen
 ```
 
 El reporte se guarda en `data/results/<exp>/report/report.html`.
+Incluye: resumen por etapa (Agente/Acción/Métricas/Por qué), gráfica de CPU/Mem con eventos, y un "Glosario de porqués y decisiones" que sintetiza las motivaciones y parámetros usados en cada etapa.
