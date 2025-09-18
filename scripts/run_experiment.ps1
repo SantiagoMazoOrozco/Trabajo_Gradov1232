@@ -5,7 +5,9 @@ param(
     [int]$AffinityMask,
     [switch]$Monitored,
     [int]$MonitorSeconds = 180,
-    [switch]$Report
+    [switch]$Report,
+    [string]$ApiHost = "127.0.0.1",
+    [int]$ApiPort = 8000
 )
 
 # Purpose: Start FastAPI server, wait for health, run simulation, and stop server.
@@ -47,7 +49,12 @@ function Start-Api {
     $env:PYTHONUNBUFFERED = "1"
     $py = Join-Path (Get-Location) ".venv\Scripts\python.exe"
     if (-not (Test-Path $py)) { throw "Python venv not found at $py" }
-    $script:apiProcess = Start-Process -FilePath $py -ArgumentList "-m","uvicorn","python-analysis.api.main:app","--host","127.0.0.1","--port","8000","--log-level","warning" -PassThru -WindowStyle Hidden
+    $logsDir = Join-Path (Get-Location) "data\results\_server_logs"
+    if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir | Out-Null }
+    $script:apiLogPath = Join-Path $logsDir ("uvicorn_" + (Get-Date -Format "yyyyMMdd_HHmmss") + ".log")
+    $script:apiErrPath = Join-Path $logsDir ("uvicorn_" + (Get-Date -Format "yyyyMMdd_HHmmss") + ".err.log")
+    $args = @("-m","uvicorn","python-analysis.api.main:app","--host",$ApiHost,"--port",$ApiPort,"--log-level","info")
+    $script:apiProcess = Start-Process -FilePath $py -ArgumentList $args -RedirectStandardOutput $script:apiLogPath -RedirectStandardError $script:apiErrPath -PassThru -WindowStyle Hidden
     Start-Sleep -Milliseconds 300
     if ($HighPriority -and $script:apiProcess) {
         try { (Get-Process -Id $script:apiProcess.Id).PriorityClass = 'High' } catch {}
@@ -81,17 +88,29 @@ try {
     # Check if API already up
     $apiHealthy = $false
     try {
-        $resp = Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:8000/health" -TimeoutSec 2
+        $resp = Invoke-WebRequest -UseBasicParsing -Uri ("http://" + $ApiHost + ":" + $ApiPort + "/health") -TimeoutSec 2
         if ($resp.StatusCode -eq 200) { $apiHealthy = $true }
     } catch {}
 
     $startedHere = $false
+    $apiPid = $null
     if (-not $apiHealthy) {
         Start-Api
         $startedHere = $true
-        if (-not (Wait-For-Health -Url "http://127.0.0.1:8000/health" -TimeoutSec 30)) {
+    if (-not (Wait-For-Health -Url ("http://" + $ApiHost + ":" + $ApiPort + "/health") -TimeoutSec 60)) {
+            Write-Warning "API health check failed after 60s. Showing last lines of server log:"
+            if ($script:apiLogPath -and (Test-Path $script:apiLogPath)) {
+                try { Get-Content $script:apiLogPath -Tail 50 | Out-Host } catch {}
+            }
+            if ($script:apiErrPath -and (Test-Path $script:apiErrPath)) {
+                try { Get-Content $script:apiErrPath -Tail 50 | Out-Host } catch {}
+            }
             throw "API health check failed"
         }
+        try {
+            $pidResp = Invoke-WebRequest -UseBasicParsing -Uri ("http://" + $ApiHost + ":" + $ApiPort + "/pid") -TimeoutSec 5
+            $apiPid = ($pidResp.Content | ConvertFrom-Json).pid
+        } catch { Write-Warning "No se pudo obtener PID del API: $_" }
     } else {
         Write-Host "API already running."
     }
@@ -101,12 +120,16 @@ try {
         try {
             Write-Host "Starting monitor for $MonitorSeconds seconds..."
             $py = Join-Path (Get-Location) ".venv\Scripts\python.exe"
-            $script:monProcess = Start-Process -FilePath $py -ArgumentList ".\python-analysis\monitor_run.py", $ExperimentId, "--duration", $MonitorSeconds -PassThru -WindowStyle Hidden
+            $monArgs = @(".\python-analysis\monitor_run.py", $ExperimentId, "--duration", $MonitorSeconds)
+            if ($apiPid) { $monArgs += @("--pid", $apiPid) }
+            $script:monProcess = Start-Process -FilePath $py -ArgumentList $monArgs -PassThru -WindowStyle Hidden
         } catch { Write-Warning "No se pudo iniciar el monitor: $_" }
     }
 
     Write-Host "Running simulation..."
-    python .\python-analysis\simulate_experiment.py $ExperimentId
+    $env:API_BASE = "http://" + $ApiHost + ":" + $ApiPort
+    $simArgs = @(".\python-analysis\simulate_experiment.py", $ExperimentId)
+    & $py $simArgs
 
     Write-Host "Done. Results at data/results/$ExperimentId"
     if ($Report) {

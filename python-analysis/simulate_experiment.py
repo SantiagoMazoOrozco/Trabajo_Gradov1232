@@ -4,7 +4,7 @@ import os
 import time
 from datetime import datetime
 
-API = "http://127.0.0.1:8000"
+API = os.environ.get("API_BASE", "http://127.0.0.1:8000")
 
 
 def log_line(exp_id: str, event: str, payload: dict):
