@@ -97,3 +97,18 @@ Nota: En caso de fallo en cualquier etapa, el agente emite FAILURE con causa + r
 - Protocolo de mensajes definido (ver `docs/message-protocol.md`).
 - Plantilla de configuración de experimento (variables y factores) enlazada con Orchestrator.
 - Un flujo de extremo a extremo simulado (mock o scripts) que produce archivos en `data/results/` con logs.
+
+## Nombres de agentes parametrizables
+
+Para facilitar la futura integración con JADE, los nombres de agentes que aparecen en los eventos/logs son configurables mediante el archivo `python-analysis/agent_config.json`. Ejemplo por defecto:
+
+```
+{
+	"PreprocessingAgent": "PreprocessingAgent",
+	"TrainingAgentRF": "TrainingAgentRF",
+	"TrainingAgentSVM": "TrainingAgentSVM",
+	"EvaluationAgent": "EvaluationAgent"
+}
+```
+
+El simulador (`python-analysis/simulate_experiment.py`) carga este archivo al inicio y utiliza los nombres resultantes en los eventos START/RETRY/FAILURE/DONE. Esto permite alinear la nomenclatura con agentes reales de la plataforma (p. ej., JADE) sin modificar código.

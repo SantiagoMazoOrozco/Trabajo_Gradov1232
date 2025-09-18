@@ -41,6 +41,12 @@ Se generará (o descargará) y se almacenará en `data/raw` junto a su archivo `
 ## Fase 1 – Cómo ejecutar en entorno controlado
 Consulta el runbook detallado en `docs/runbook_fase1.md`.
 
+Documentos relacionados:
+- Arquitectura: `docs/architecture.md`
+- Protocolo de mensajes: `docs/message-protocol.md`
+- Metodología: `docs/methodology.md`
+- Índice por fecha de documentación: `docs/INDEX_BY_DATE.md`
+
 Atajo automático (PowerShell):
 ```
 powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -ExperimentId exp_demo_01

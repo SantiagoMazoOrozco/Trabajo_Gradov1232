@@ -73,6 +73,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_experiment.ps1 -Experimen
 ```
 
 Notas:
+- El runner inicia el API con Uvicorn, espera `/health` y luego ejecuta el simulador.
+- Puede ejecutar el monitor en paralelo y generar reporte HTML al final.
+- Si el puerto 8000 está ocupado, usa `-ApiPort 8001` (o el que necesites). El simulador y el monitor leen la URL del API desde `API_BASE` automáticamente cuando se invoca a través del runner.
+- Los nombres de agentes utilizados en los eventos se configuran en `python-analysis/agent_config.json`.
+
+Consulta además `docs/methodology.md` para las justificaciones metodológicas y métricas registradas.
 - `-Quiesce` llama a `scripts/quiesce_system.ps1` (pone plan de energía Alto/Ultimate, pausa OneDrive y detiene servicios no críticos si hay permisos). Luego `scripts/restore_system.ps1` revierte.
 - Sin permisos de administrador, se omiten detenciones de servicios y se te alertará; el resto del flujo continúa.
 
