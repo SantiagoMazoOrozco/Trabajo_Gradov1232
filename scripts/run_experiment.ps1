@@ -1,5 +1,7 @@
 param(
     [string]$ExperimentId,
+    [ValidateSet('control','treatment')]
+    [string]$Group = 'treatment',
     [switch]$Quiesce,
     [switch]$HighPriority,
     [int]$AffinityMask,
@@ -132,6 +134,21 @@ try {
     & $py $simArgs
 
     Write-Host "Done. Results at data/results/$ExperimentId"
+    # Write experiment meta
+    try {
+        $metaDir = Join-Path (Get-Location) ("data/results/" + $ExperimentId)
+        if (-not (Test-Path $metaDir)) { New-Item -ItemType Directory -Path $metaDir | Out-Null }
+        $meta = [ordered]@{
+            experimentId = $ExperimentId
+            group = $Group
+            api_host = $ApiHost
+            api_port = $ApiPort
+            monitored = [bool]$Monitored
+            created_utc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+        }
+        $metaPath = Join-Path $metaDir 'meta.json'
+        $meta | ConvertTo-Json -Depth 5 | Set-Content -Path $metaPath -Encoding UTF8
+    } catch { Write-Warning "No se pudo escribir meta.json: $_" }
     if ($Report) {
         try {
             Write-Host "Generating HTML report..."

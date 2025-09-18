@@ -6,6 +6,7 @@ from glob import glob
 
 FIELDS = [
     'experimentId',
+    'group',
     'stage',
     'time_ms',
     'cpu_avg',
@@ -28,7 +29,18 @@ def read_events(path):
     return rows
 
 
-def extract_metrics(exp_id, events):
+def load_group(exp_dir):
+    meta_path = os.path.join(exp_dir, 'meta.json')
+    if os.path.exists(meta_path):
+        try:
+            with open(meta_path, 'r', encoding='utf-8') as f:
+                return (json.load(f) or {}).get('group')
+        except Exception:
+            return None
+    return None
+
+
+def extract_metrics(exp_id, group, events):
     out = []
     by_event = {e.get('event'): e for e in events}
 
@@ -38,6 +50,7 @@ def extract_metrics(exp_id, events):
         tm = rf.get('train_metrics') or {}
         out.append({
             'experimentId': exp_id,
+            'group': group,
             'stage': 'TRAIN_RF',
             'time_ms': tm.get('time_ms'),
             'cpu_avg': tm.get('cpu_avg'),
@@ -51,6 +64,7 @@ def extract_metrics(exp_id, events):
         em = er.get('eval_metrics') or {}
         out.append({
             'experimentId': exp_id,
+            'group': group,
             'stage': 'EVAL_RF',
             'time_ms': None,
             'cpu_avg': None,
@@ -64,6 +78,7 @@ def extract_metrics(exp_id, events):
         tm = svm.get('train_metrics') or {}
         out.append({
             'experimentId': exp_id,
+            'group': group,
             'stage': 'TRAIN_SVM',
             'time_ms': tm.get('time_ms'),
             'cpu_avg': tm.get('cpu_avg'),
@@ -77,6 +92,7 @@ def extract_metrics(exp_id, events):
         em = es.get('eval_metrics') or {}
         out.append({
             'experimentId': exp_id,
+            'group': group,
             'stage': 'EVAL_SVM',
             'time_ms': None,
             'cpu_avg': None,
@@ -98,8 +114,9 @@ def main():
     for d in exp_dirs:
         exp_id = os.path.basename(d)
         ev_path = os.path.join(d, 'logs', 'events.jsonl')
-        evs = read_events(ev_path)
-        rows.extend(extract_metrics(exp_id, evs))
+    evs = read_events(ev_path)
+    group = load_group(d)
+    rows.extend(extract_metrics(exp_id, group, evs))
 
     os.makedirs(os.path.dirname(args.output), exist_ok=True)
     with open(args.output, 'w', newline='', encoding='utf-8') as f:
