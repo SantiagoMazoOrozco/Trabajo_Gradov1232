@@ -46,6 +46,8 @@ Documentos relacionados:
 - Protocolo de mensajes: `docs/message-protocol.md`
 - Metodología: `docs/methodology.md`
 - Índice por fecha de documentación: `docs/INDEX_BY_DATE.md`
+- Automatización de índices diarios: `docs/automation.md`
+- Plan de integración con BAF: `docs/baf_integration_plan.md`
 
 Atajo automático (PowerShell):
 ```

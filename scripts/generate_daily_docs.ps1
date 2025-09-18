@@ -1,6 +1,15 @@
 param(
+    # Single date to process (ignored if -StartDate is provided)
     [string]$Date = (Get-Date -Format 'yyyy-MM-dd'),
-    [switch]$NoDailyLog
+    # Optional start/end to process a date range inclusive (yyyy-MM-dd)
+    [string]$StartDate,
+    [string]$EndDate,
+    # Skip generating daily-log file
+    [switch]$NoDailyLog,
+    # Show actions without writing files
+    [switch]$DryRun,
+    # Copy changed docs/* files into docs/YYYY-MM-DD (skips date folders and master index)
+    [switch]$CopyDocs
 )
 
 $ErrorActionPreference = 'Stop'
@@ -55,7 +64,10 @@ function Write-DailyIndex {
     }
 
     $dayDir = Join-Path 'docs' $Date
-    if (-not (Test-Path $dayDir)) { New-Item -ItemType Directory -Path $dayDir | Out-Null }
+    if (-not (Test-Path $dayDir)) {
+        if ($DryRun) { Write-Host "[DryRun] Would create directory $dayDir" -ForegroundColor Yellow }
+        else { New-Item -ItemType Directory -Path $dayDir | Out-Null }
+    }
 
     $indexPath = Join-Path $dayDir 'index.md'
     $sb = New-Object System.Text.StringBuilder
@@ -66,8 +78,11 @@ function Write-DailyIndex {
         [void]$sb.AppendLine("Archivos de documentación creados/actualizados:")
         [void]$sb.AppendLine()
         foreach ($f in ($docsFiles | Sort-Object)) {
-            $rel = "../$f" -replace '\\','/'
-            [void]$sb.AppendLine("- $rel")
+            # For docs files, link relative from docs/$Date to the file under docs/ (strip leading 'docs/')
+            $relPart = ($f -replace '^docs[\\/]', '')
+            $rel = (Join-Path '..' $relPart) -replace '\\','/'
+            $name = [System.IO.Path]::GetFileName($f)
+            [void]$sb.AppendLine("- [${name}](${rel})")
         }
         [void]$sb.AppendLine()
     } else {
@@ -80,12 +95,14 @@ function Write-DailyIndex {
         [void]$sb.AppendLine()
         foreach ($f in ($codeFiles | Sort-Object)) {
             $rel = "../../$f" -replace '\\','/'
-            [void]$sb.AppendLine("- $rel")
+            $name = [System.IO.Path]::GetFileName($f)
+            [void]$sb.AppendLine("- [${name}](${rel})")
         }
         [void]$sb.AppendLine()
     }
 
-    Set-Content -Path $indexPath -Value $sb.ToString() -Encoding UTF8
+    if ($DryRun) { Write-Host "[DryRun] Would write $indexPath" -ForegroundColor Yellow }
+    else { Set-Content -Path $indexPath -Value $sb.ToString() -Encoding UTF8 }
 }
 
 function Write-DailyLog {
@@ -94,13 +111,16 @@ function Write-DailyLog {
         [object[]]$Entries
     )
     $dayDir = Join-Path 'docs' $Date
-    if (-not (Test-Path $dayDir)) { New-Item -ItemType Directory -Path $dayDir | Out-Null }
+    if (-not (Test-Path $dayDir)) {
+        if ($DryRun) { Write-Host "[DryRun] Would create directory $dayDir" -ForegroundColor Yellow }
+        else { New-Item -ItemType Directory -Path $dayDir | Out-Null }
+    }
     $logPath = Join-Path $dayDir ("daily-log-$Date.md")
     $sb = New-Object System.Text.StringBuilder
     [void]$sb.AppendLine("# Registro diario - $Date")
     [void]$sb.AppendLine()
     if ($Entries.Count -eq 0) {
-    [void]$sb.AppendLine("Sin commits en esta fecha segun git log.")
+        [void]$sb.AppendLine("Sin commits en esta fecha según git log.")
     } else {
         foreach ($e in $Entries) {
             [void]$sb.AppendLine("- ``" + $e.hash + "`` " + $e.subject)
@@ -110,7 +130,8 @@ function Write-DailyLog {
             [void]$sb.AppendLine()
         }
     }
-    Set-Content -Path $logPath -Value $sb.ToString() -Encoding UTF8
+    if ($DryRun) { Write-Host "[DryRun] Would write $logPath" -ForegroundColor Yellow }
+    else { Set-Content -Path $logPath -Value $sb.ToString() -Encoding UTF8 }
 }
 
 function Update-MasterIndex {
@@ -120,21 +141,73 @@ function Update-MasterIndex {
     [void]$sb.AppendLine('# Índice por fecha de documentación')
     [void]$sb.AppendLine()
     foreach ($d in $dirs) {
-    [void]$sb.AppendLine("- " + $d.Name + " - docs/" + $d.Name + "/index.md")
+        $link = ("docs/" + $d.Name + "/index.md")
+        [void]$sb.AppendLine("- [" + $d.Name + "](" + $link + ")")
     }
     [void]$sb.AppendLine()
     [void]$sb.AppendLine('Nota: Los enlaces apuntan a índices diarios que referencian los documentos fuente.')
-    Set-Content -Path (Join-Path $docsDir 'INDEX_BY_DATE.md') -Value $sb.ToString() -Encoding UTF8
+    $masterPath = Join-Path $docsDir 'INDEX_BY_DATE.md'
+    if ($DryRun) { Write-Host "[DryRun] Would write $masterPath" -ForegroundColor Yellow }
+    else { Set-Content -Path $masterPath -Value $sb.ToString() -Encoding UTF8 }
+}
+
+function Copy-ChangedDocsIntoDayFolder {
+    param(
+        [string]$Date,
+        [object[]]$Entries
+    )
+    if (-not $CopyDocs) { return }
+    $dayDir = Join-Path 'docs' $Date
+    if (-not (Test-Path $dayDir)) {
+        if ($DryRun) { Write-Host "[DryRun] Would create directory $dayDir" -ForegroundColor Yellow }
+        else { New-Item -ItemType Directory -Path $dayDir | Out-Null }
+    }
+    $seen = New-Object 'System.Collections.Generic.HashSet[string]'
+    foreach ($e in $Entries) {
+        foreach ($f in $e.files) {
+            if (-not ($f -like 'docs/*' -or $f -like 'docs\\*')) { continue }
+            # Skip date folders and master index
+            if ($f -match '^docs[\\/][0-9]{4}-[0-9]{2}-[0-9]{2}[\\/]') { continue }
+            if ($f -match '^docs[\\/]INDEX_BY_DATE\.md$') { continue }
+            if (-not (Test-Path $f)) { continue }
+            if ($seen.Contains($f)) { continue }
+            [void]$seen.Add($f)
+            $fileName = [System.IO.Path]::GetFileName($f)
+            $dest = Join-Path $dayDir $fileName
+            if ($DryRun) {
+                Write-Host "[DryRun] Would copy $f -> $dest" -ForegroundColor Yellow
+            } else {
+                Copy-Item -Path $f -Destination $dest -Force
+            }
+        }
+    }
+}
+
+function Generate-ForDate {
+    param([string]$Date)
+    $lines = Get-GitLogForDate -Date $Date
+    $entries = ConvertFrom-GitLog -Lines $lines
+    Copy-ChangedDocsIntoDayFolder -Date $Date -Entries $entries
+    Write-DailyIndex -Date $Date -Entries $entries
+    if (-not $NoDailyLog) { Write-DailyLog -Date $Date -Entries $entries }
 }
 
 # Main
 try {
-    $lines = Get-GitLogForDate -Date $Date
-    $entries = ConvertFrom-GitLog -Lines $lines
-    Write-DailyIndex -Date $Date -Entries $entries
-    if (-not $NoDailyLog) { Write-DailyLog -Date $Date -Entries $entries }
+    if ($StartDate) {
+        $start = [DateTime]::ParseExact($StartDate, 'yyyy-MM-dd', $null)
+        $end = if ($EndDate) { [DateTime]::ParseExact($EndDate, 'yyyy-MM-dd', $null) } else { $start }
+        for ($d = $start; $d -le $end; $d = $d.AddDays(1)) {
+            $ds = $d.ToString('yyyy-MM-dd')
+            Write-Host "Processing $ds ..." -ForegroundColor Cyan
+            Generate-ForDate -Date $ds
+        }
+    } else {
+        Generate-ForDate -Date $Date
+    }
     Update-MasterIndex
-    Write-Host "Daily index generated for $Date under docs/$Date."
+    if ($DryRun) { Write-Host "[DryRun] Completed without writing files" -ForegroundColor Yellow }
+    else { Write-Host "Daily indices updated." }
 } catch {
     Write-Error $_
     exit 1
