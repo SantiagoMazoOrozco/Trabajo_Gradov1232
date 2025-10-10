@@ -38,7 +38,7 @@ def main():
     args = ap.parse_args()
 
     df = pd.read_csv(args.csv)
-    # Expect columns: experimentId, group, stage, time_ms, cpu_avg, mem_peak_mb, accuracy, f1
+    # Expect columns: experimentId, group, stage, time_ms, cpu_avg, mem_peak_mb, energy_j_total, energy_j_per_mb, accuracy, f1
     groups = df['group'].dropna().unique().tolist()
     if not groups or len(groups) < 2:
         print(json.dumps({'error': 'Need at least two groups in aggregate CSV'}))
@@ -50,6 +50,10 @@ def main():
     tests = [
         ('TRAIN_RF', 'time_ms'),
         ('TRAIN_SVM', 'time_ms'),
+        ('TRAIN_RF', 'records_per_s'),
+        ('TRAIN_SVM', 'records_per_s'),
+        ('TRAIN_RF', 'energy_j_per_mb'),
+        ('TRAIN_SVM', 'energy_j_per_mb'),
         ('EVAL_RF', 'accuracy'),
         ('EVAL_SVM', 'accuracy'),
         ('EVAL_RF', 'f1'),

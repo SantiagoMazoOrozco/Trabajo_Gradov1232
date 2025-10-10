@@ -65,7 +65,20 @@ def main():
         metrics = ''
         if end_ev.startswith('MODEL_TRAINED') and e:
             tm = e.get('train_metrics') or {}
+            energy_mb = tm.get('energy_j_per_mb')
+            energy_tot = tm.get('energy_j_total')
             metrics = f"tiempo={tm.get('time_ms')} ms, cpu_prom={tm.get('cpu_avg')} %, mem_pico={tm.get('mem_peak_mb')} MB"
+            if energy_mb is not None:
+                metrics += f", energía/MB={energy_mb} J/MB"
+            if energy_tot is not None:
+                metrics += f", energía_total={energy_tot} J"
+            # Throughput
+            if tm.get('records_per_s') is not None:
+                metrics += f", records/s={tm.get('records_per_s')}"
+            if tm.get('data_mb_per_s') is not None:
+                metrics += f", MB/s={tm.get('data_mb_per_s')}"
+            if tm.get('energy_j_per_record') is not None:
+                metrics += f", J/record={tm.get('energy_j_per_record')}"
         if end_ev.startswith('EVAL_DONE') and e:
             em = e.get('eval_metrics') or {}
             metrics = f"accuracy={em.get('accuracy')}, f1={em.get('f1')}"

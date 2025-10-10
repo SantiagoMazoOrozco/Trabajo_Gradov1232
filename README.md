@@ -48,6 +48,7 @@ Documentos relacionados:
 - Índice por fecha de documentación: `docs/INDEX_BY_DATE.md`
 - Automatización de índices diarios: `docs/automation.md`
 - Plan de integración con BAF: `docs/baf_integration_plan.md`
+ - Guía de experimentos (ejecución y análisis): `docs/experiments.md`
 
 Atajo automático (PowerShell):
 ```

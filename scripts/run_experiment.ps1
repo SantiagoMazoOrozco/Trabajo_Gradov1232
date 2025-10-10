@@ -8,6 +8,7 @@ param(
     [switch]$Monitored,
     [int]$MonitorSeconds = 180,
     [switch]$Report,
+    [int]$Seed = 42,
     [string]$ApiHost = "127.0.0.1",
     [int]$ApiPort = 8000
 )
@@ -49,14 +50,17 @@ function Wait-For-Health {
 function Start-Api {
     Write-Host "Starting API server..."
     $env:PYTHONUNBUFFERED = "1"
-    $py = Join-Path (Get-Location) ".venv\Scripts\python.exe"
-    if (-not (Test-Path $py)) { throw "Python venv not found at $py" }
+    # Use script-scoped Python exe if available, else resolve
+    if (-not $script:pyExe) {
+        $script:pyExe = Join-Path (Get-Location) ".venv\Scripts\python.exe"
+    }
+    if (-not (Test-Path $script:pyExe)) { throw "Python venv not found at $script:pyExe" }
     $logsDir = Join-Path (Get-Location) "data\results\_server_logs"
     if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir | Out-Null }
     $script:apiLogPath = Join-Path $logsDir ("uvicorn_" + (Get-Date -Format "yyyyMMdd_HHmmss") + ".log")
     $script:apiErrPath = Join-Path $logsDir ("uvicorn_" + (Get-Date -Format "yyyyMMdd_HHmmss") + ".err.log")
     $args = @("-m","uvicorn","python-analysis.api.main:app","--host",$ApiHost,"--port",$ApiPort,"--log-level","info")
-    $script:apiProcess = Start-Process -FilePath $py -ArgumentList $args -RedirectStandardOutput $script:apiLogPath -RedirectStandardError $script:apiErrPath -PassThru -WindowStyle Hidden
+    $script:apiProcess = Start-Process -FilePath $script:pyExe -ArgumentList $args -RedirectStandardOutput $script:apiLogPath -RedirectStandardError $script:apiErrPath -PassThru -WindowStyle Hidden
     Start-Sleep -Milliseconds 300
     if ($HighPriority -and $script:apiProcess) {
         try { (Get-Process -Id $script:apiProcess.Id).PriorityClass = 'High' } catch {}
@@ -121,17 +125,18 @@ try {
     if ($Monitored) {
         try {
             Write-Host "Starting monitor for $MonitorSeconds seconds..."
-            $py = Join-Path (Get-Location) ".venv\Scripts\python.exe"
+            if (-not $script:pyExe) { $script:pyExe = Join-Path (Get-Location) ".venv\Scripts\python.exe" }
             $monArgs = @(".\python-analysis\monitor_run.py", $ExperimentId, "--duration", $MonitorSeconds)
             if ($apiPid) { $monArgs += @("--pid", $apiPid) }
-            $script:monProcess = Start-Process -FilePath $py -ArgumentList $monArgs -PassThru -WindowStyle Hidden
+            $script:monProcess = Start-Process -FilePath $script:pyExe -ArgumentList $monArgs -PassThru -WindowStyle Hidden
         } catch { Write-Warning "No se pudo iniciar el monitor: $_" }
     }
 
     Write-Host "Running simulation..."
     $env:API_BASE = "http://" + $ApiHost + ":" + $ApiPort
-    $simArgs = @(".\python-analysis\simulate_experiment.py", $ExperimentId)
-    & $py $simArgs
+    if (-not $script:pyExe) { $script:pyExe = Join-Path (Get-Location) ".venv\Scripts\python.exe" }
+    $simArgs = @(".\python-analysis\simulate_experiment.py", $ExperimentId, $Seed)
+    & $script:pyExe $simArgs
 
     Write-Host "Done. Results at data/results/$ExperimentId"
     # Write experiment meta
@@ -141,6 +146,7 @@ try {
         $meta = [ordered]@{
             experimentId = $ExperimentId
             group = $Group
+            seed = $Seed
             api_host = $ApiHost
             api_port = $ApiPort
             monitored = [bool]$Monitored
@@ -152,8 +158,8 @@ try {
     if ($Report) {
         try {
             Write-Host "Generating HTML report..."
-            $py = Join-Path (Get-Location) ".venv\Scripts\python.exe"
-            & $py .\python-analysis\report_run.py $ExperimentId | Out-Host
+            if (-not $script:pyExe) { $script:pyExe = Join-Path (Get-Location) ".venv\Scripts\python.exe" }
+            & $script:pyExe .\python-analysis\report_run.py $ExperimentId | Out-Host
         } catch { Write-Warning "No se pudo generar el reporte: $_" }
     }
 } finally {

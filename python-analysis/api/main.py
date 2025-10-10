@@ -1,4 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 from typing import Optional, Literal, Dict, Any
 import os
@@ -56,6 +59,15 @@ class TrainMetrics(BaseModel):
     cpu_avg: Optional[float] = None
     mem_peak_mb: Optional[float] = None
     energy_j_per_mb: Optional[float] = None
+    energy_j_total: Optional[float] = None
+    # Throughput and efficiencies
+    n_train: Optional[int] = None
+    mb_processed: Optional[float] = None
+    records_per_s: Optional[float] = None
+    data_mb_per_s: Optional[float] = None
+    energy_j_per_record: Optional[float] = None
+    efficiency_cpu_rps_per_pct: Optional[float] = None  # records/s per 1% CPU
+    efficiency_mem_rps_per_mb: Optional[float] = None   # records/s per MB peak
     seed: int
 
 
@@ -164,6 +176,109 @@ class ResourceSampler:
 
 app = FastAPI(title="SMA-ML Experimental API", version="0.1.0")
 
+# ---- Templates & Static (Dashboard) ----
+TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'web', 'templates')
+STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'web', 'static')
+os.makedirs(TEMPLATES_DIR, exist_ok=True)
+os.makedirs(STATIC_DIR, exist_ok=True)
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
+if not any([p for p in app.routes if getattr(p, 'path', None) == '/static']):
+    app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
+
+
+def list_experiments(root: str = os.path.join('data', 'results')):
+    exps = []
+    if not os.path.exists(root):
+        return exps
+    for name in os.listdir(root):
+        if name.startswith('_'):
+            continue
+        exp_dir = os.path.join(root, name)
+        if not os.path.isdir(exp_dir):
+            continue
+        meta_path = os.path.join(exp_dir, 'meta.json')
+        group = None
+        created = None
+        if os.path.exists(meta_path):
+            try:
+                import json
+                with open(meta_path, 'r', encoding='utf-8-sig') as f:
+                    meta = json.load(f) or {}
+                group = meta.get('group')
+                created = meta.get('created_utc')
+            except Exception:
+                pass
+        exps.append({'id': name, 'group': group, 'created_utc': created})
+    exps.sort(key=lambda x: x.get('created_utc') or '', reverse=True)
+    return exps
+
+
+def load_events(exp_id: str):
+    ev_path = os.path.join('data', 'results', exp_id, 'logs', 'events.jsonl')
+    events = []
+    if os.path.exists(ev_path):
+        with open(ev_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                try:
+                    events.append(json.loads(line))
+                except Exception:
+                    pass
+    return events
+
+
+def summarize_experiment(exp_id: str):
+    events = load_events(exp_id)
+    by_event = {e.get('event'): e for e in events}
+    summary = {'id': exp_id, 'train': {}, 'eval': {}, 'raw_events': events}
+    for algo in ('RF', 'SVM'):
+        t_ev = by_event.get(f'MODEL_TRAINED_{algo}')
+        e_ev = by_event.get(f'EVAL_DONE_{algo}')
+        if t_ev:
+            tm = t_ev.get('train_metrics') or {}
+            summary['train'][algo] = {
+                'time_ms': tm.get('time_ms'),
+                'cpu_avg': tm.get('cpu_avg'),
+                'mem_peak_mb': tm.get('mem_peak_mb'),
+                'energy_j_total': tm.get('energy_j_total'),
+                'energy_j_per_mb': tm.get('energy_j_per_mb')
+            }
+        if e_ev:
+            em = e_ev.get('eval_metrics') or {}
+            summary['eval'][algo] = {
+                'accuracy': em.get('accuracy'),
+                'f1': em.get('f1')
+            }
+    return summary
+
+
+@app.get('/', response_class=HTMLResponse)
+def dashboard_root(request: Request):
+    exps = list_experiments()
+    stats_md = None
+    stats_path = os.path.join('data', 'results', 'stats_summary.md')
+    if os.path.exists(stats_path):
+        try:
+            with open(stats_path, 'r', encoding='utf-8') as f:
+                stats_md = f.read()
+        except Exception:
+            pass
+    return templates.TemplateResponse('experiments.html', {
+        'request': request,
+        'experiments': exps,
+        'stats_md': stats_md,
+        'title': 'Experimentos'
+    })
+
+
+@app.get('/experiments/{exp_id}', response_class=HTMLResponse)
+def experiment_detail(exp_id: str, request: Request):
+    summary = summarize_experiment(exp_id)
+    return templates.TemplateResponse('experiment_detail.html', {
+        'request': request,
+        'exp': summary,
+        'title': f'Experimento {exp_id}'
+    })
+
 
 def ensure_results_dir(exp_id: str, *subdirs: str) -> str:
     base = os.path.join("data", "results", exp_id, *subdirs)
@@ -239,8 +354,10 @@ def train(req: TrainRequest):
     prep_ref = PrepRef(**payload.get("prepRef"))
 
     try:
-        X_train = pd.read_csv(prep_ref.paths["X_train"]).values
-        y_train = pd.read_csv(prep_ref.paths["y_train"]).values.ravel()
+        X_train_df = pd.read_csv(prep_ref.paths["X_train"])  # keep df to compute memory footprint
+        y_train_df = pd.read_csv(prep_ref.paths["y_train"])  # keep df to compute memory footprint
+        X_train = X_train_df.values
+        y_train = y_train_df.values.ravel()
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Cannot load training data: {e}")
 
@@ -268,11 +385,44 @@ def train(req: TrainRequest):
     joblib.dump(model, model_path)
     model_hash = sha256_file(model_path)
 
+    # Estimate energy consumption proxy
+    try:
+        cpu_power_w = float(os.environ.get("CPU_POWER_W", "35.0"))  # configurable TDP/power in watts
+    except ValueError:
+        cpu_power_w = 35.0
+    cpu_avg = float(np.mean(sampler._cpu_samples)) if sampler._cpu_samples else None
+    time_s = elapsed_ms / 1000.0
+    # Approx processed data size in MB (features + labels) using pandas memory_usage
+    bytes_processed = int(X_train_df.memory_usage(deep=True).sum() + y_train_df.memory_usage(deep=True).sum())
+    mb_processed = (bytes_processed / (1024.0 * 1024.0)) if bytes_processed > 0 else None
+    energy_total_j = None
+    energy_per_mb = None
+    if cpu_avg is not None:
+        energy_total_j = cpu_power_w * (cpu_avg / 100.0) * time_s
+        if mb_processed and mb_processed > 0:
+            energy_per_mb = energy_total_j / mb_processed
+
+    # Throughput and derived efficiencies
+    n_train = int(len(y_train)) if isinstance(y_train, (list, np.ndarray)) else int(y_train_df.shape[0])
+    records_per_s = (n_train / time_s) if time_s > 0 else None
+    data_mb_per_s = (mb_processed / time_s) if (mb_processed and time_s > 0) else None
+    energy_j_per_record = (energy_total_j / n_train) if (energy_total_j is not None and n_train > 0) else None
+    efficiency_cpu = (records_per_s / cpu_avg) if (records_per_s is not None and cpu_avg and cpu_avg > 0) else None
+    efficiency_mem = (records_per_s / sampler.mem_peak_mb) if (records_per_s is not None and sampler.mem_peak_mb and sampler.mem_peak_mb > 0) else None
+
     metrics = TrainMetrics(
         time_ms=round(elapsed_ms, 3),
         cpu_avg=(round(sampler.cpu_avg, 2) if sampler.cpu_avg is not None else None),
         mem_peak_mb=sampler.mem_peak_mb,
-        energy_j_per_mb=None,  # TODO: estimar si se dispone de potencia promedio CPU/SoC
+        energy_j_per_mb=(round(energy_per_mb, 6) if energy_per_mb is not None else None),
+        energy_j_total=(round(energy_total_j, 3) if energy_total_j is not None else None),
+        n_train=n_train,
+        mb_processed=(round(mb_processed, 6) if mb_processed is not None else None),
+        records_per_s=(round(records_per_s, 6) if records_per_s is not None else None),
+        data_mb_per_s=(round(data_mb_per_s, 6) if data_mb_per_s is not None else None),
+        energy_j_per_record=(round(energy_j_per_record, 9) if energy_j_per_record is not None else None),
+        efficiency_cpu_rps_per_pct=(round(efficiency_cpu, 6) if efficiency_cpu is not None else None),
+        efficiency_mem_rps_per_mb=(round(efficiency_mem, 6) if efficiency_mem is not None else None),
         seed=seed,
     )
 

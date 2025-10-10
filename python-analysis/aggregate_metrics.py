@@ -11,6 +11,15 @@ FIELDS = [
     'time_ms',
     'cpu_avg',
     'mem_peak_mb',
+    'n_train',
+    'mb_processed',
+    'records_per_s',
+    'data_mb_per_s',
+    'energy_j_total',
+    'energy_j_per_mb',
+    'energy_j_per_record',
+    'efficiency_cpu_rps_per_pct',
+    'efficiency_mem_rps_per_mb',
     'accuracy',
     'f1',
 ]
@@ -33,8 +42,13 @@ def load_group(exp_dir):
     meta_path = os.path.join(exp_dir, 'meta.json')
     if os.path.exists(meta_path):
         try:
-            with open(meta_path, 'r', encoding='utf-8') as f:
-                return (json.load(f) or {}).get('group')
+            # Use utf-8-sig to support BOM-prefixed JSON files written by some tools
+            with open(meta_path, 'r', encoding='utf-8-sig') as f:
+                meta = json.load(f) or {}
+                g = meta.get('group')
+                if isinstance(g, str) and g.strip():
+                    return g.strip()
+                return None
         except Exception:
             return None
     return None
@@ -55,6 +69,15 @@ def extract_metrics(exp_id, group, events):
             'time_ms': tm.get('time_ms'),
             'cpu_avg': tm.get('cpu_avg'),
             'mem_peak_mb': tm.get('mem_peak_mb'),
+            'n_train': tm.get('n_train'),
+            'mb_processed': tm.get('mb_processed'),
+            'records_per_s': tm.get('records_per_s'),
+            'data_mb_per_s': tm.get('data_mb_per_s'),
+            'energy_j_total': tm.get('energy_j_total'),
+            'energy_j_per_mb': tm.get('energy_j_per_mb'),
+            'energy_j_per_record': tm.get('energy_j_per_record'),
+            'efficiency_cpu_rps_per_pct': tm.get('efficiency_cpu_rps_per_pct'),
+            'efficiency_mem_rps_per_mb': tm.get('efficiency_mem_rps_per_mb'),
             'accuracy': None,
             'f1': None,
         })
@@ -69,6 +92,15 @@ def extract_metrics(exp_id, group, events):
             'time_ms': None,
             'cpu_avg': None,
             'mem_peak_mb': None,
+            'n_train': None,
+            'mb_processed': None,
+            'records_per_s': None,
+            'data_mb_per_s': None,
+            'energy_j_total': None,
+            'energy_j_per_mb': None,
+            'energy_j_per_record': None,
+            'efficiency_cpu_rps_per_pct': None,
+            'efficiency_mem_rps_per_mb': None,
             'accuracy': em.get('accuracy'),
             'f1': em.get('f1'),
         })
@@ -83,6 +115,15 @@ def extract_metrics(exp_id, group, events):
             'time_ms': tm.get('time_ms'),
             'cpu_avg': tm.get('cpu_avg'),
             'mem_peak_mb': tm.get('mem_peak_mb'),
+            'n_train': tm.get('n_train'),
+            'mb_processed': tm.get('mb_processed'),
+            'records_per_s': tm.get('records_per_s'),
+            'data_mb_per_s': tm.get('data_mb_per_s'),
+            'energy_j_total': tm.get('energy_j_total'),
+            'energy_j_per_mb': tm.get('energy_j_per_mb'),
+            'energy_j_per_record': tm.get('energy_j_per_record'),
+            'efficiency_cpu_rps_per_pct': tm.get('efficiency_cpu_rps_per_pct'),
+            'efficiency_mem_rps_per_mb': tm.get('efficiency_mem_rps_per_mb'),
             'accuracy': None,
             'f1': None,
         })
@@ -97,6 +138,15 @@ def extract_metrics(exp_id, group, events):
             'time_ms': None,
             'cpu_avg': None,
             'mem_peak_mb': None,
+            'n_train': None,
+            'mb_processed': None,
+            'records_per_s': None,
+            'data_mb_per_s': None,
+            'energy_j_total': None,
+            'energy_j_per_mb': None,
+            'energy_j_per_record': None,
+            'efficiency_cpu_rps_per_pct': None,
+            'efficiency_mem_rps_per_mb': None,
             'accuracy': em.get('accuracy'),
             'f1': em.get('f1'),
         })
@@ -107,16 +157,35 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--root', default='data/results', help='Root folder containing experiment dirs')
     ap.add_argument('--output', default='data/results/aggregate_metrics.csv', help='CSV output path')
+    ap.add_argument('--verbose', action='store_true', help='Print debug info while aggregating')
     args = ap.parse_args()
 
     rows = []
     exp_dirs = [d for d in glob(os.path.join(args.root, '*')) if os.path.isdir(d)]
+    if args.verbose:
+        print(f"Found {len(exp_dirs)} candidate dirs under {args.root}")
     for d in exp_dirs:
         exp_id = os.path.basename(d)
+        # Skip internal or server log folders
+        if exp_id.startswith('_'):
+            if args.verbose:
+                print(f"Skip {exp_id}: internal folder")
+            continue
         ev_path = os.path.join(d, 'logs', 'events.jsonl')
-    evs = read_events(ev_path)
-    group = load_group(d)
-    rows.extend(extract_metrics(exp_id, group, evs))
+        if not os.path.exists(ev_path):
+            if args.verbose:
+                print(f"Skip {exp_id}: no events.jsonl")
+            continue
+        group = load_group(d)
+        if not group:
+            # Skip experiments without explicit group assignment
+            if args.verbose:
+                print(f"Skip {exp_id}: no group in meta.json")
+            continue
+        evs = read_events(ev_path)
+        rows.extend(extract_metrics(exp_id, group, evs))
+        if args.verbose:
+            print(f"Added metrics for {exp_id} (group={group})")
 
     os.makedirs(os.path.dirname(args.output), exist_ok=True)
     with open(args.output, 'w', newline='', encoding='utf-8') as f:

@@ -35,20 +35,20 @@ def load_agent_names():
         return default
 
 
-def run(exp_id: str = "exp_local_demo"):
+def run(exp_id: str = "exp_local_demo", seed: int = 42):
     agents = load_agent_names()
     # 1) Preprocess
     log_line(exp_id, "PREPROCESS_START", {
         "agent": agents["PreprocessingAgent"],
         "action": "preprocess",
-        "details": {"scale": True, "test_size": 0.2, "seed": 42, "data": "data/raw/synthetic_classification.csv"}
+        "details": {"scale": True, "test_size": 0.2, "seed": seed, "data": "data/raw/synthetic_classification.csv"}
     })
     conv = f"{exp_id}_prep_1"
     data_ref = {
         "path": "data/raw/synthetic_classification.csv",
         "sha256": None,
     }
-    prep_cfg = {"scale": True, "test_size": 0.2, "seed": 42}
+    prep_cfg = {"scale": True, "test_size": 0.2, "seed": int(seed)}
     req = {"experimentId": exp_id, "conversationId": conv, "payload": {"dataRef": data_ref, "prepConfig": prep_cfg}}
     try:
         r = requests.post(f"{API}/preprocess", json=req, timeout=60)
@@ -72,7 +72,7 @@ def run(exp_id: str = "exp_local_demo"):
     log_line(exp_id, "TRAIN_RF_START", {
         "agent": agents["TrainingAgentRF"],
         "action": "train",
-        "details": {"algo": "RF", "hyperparams": {"n_estimators": 100}, "seed": 42}
+        "details": {"algo": "RF", "hyperparams": {"n_estimators": 100}, "seed": seed}
     })
     conv = f"{exp_id}_train_rf_1"
     train_req = {
@@ -82,7 +82,7 @@ def run(exp_id: str = "exp_local_demo"):
             "prepRef": prep,
             "algo": "RF",
             "hyperparams": {"RF": {"n_estimators": 100}},
-            "seed": 42,
+            "seed": int(seed),
         },
     }
     try:
@@ -140,7 +140,7 @@ def run(exp_id: str = "exp_local_demo"):
     log_line(exp_id, "TRAIN_SVM_START", {
         "agent": agents["TrainingAgentSVM"],
         "action": "train",
-        "details": {"algo": "SVM", "hyperparams": {"kernel": "rbf", "C": 1.0}, "seed": 42}
+        "details": {"algo": "SVM", "hyperparams": {"kernel": "rbf", "C": 1.0}, "seed": seed}
     })
     conv = f"{exp_id}_train_svm_1"
     train_req = {
@@ -150,7 +150,7 @@ def run(exp_id: str = "exp_local_demo"):
             "prepRef": prep,
             "algo": "SVM",
             "hyperparams": {"SVM": {"kernel": "rbf", "C": 1.0}},
-            "seed": 42,
+            "seed": int(seed),
         },
     }
     try:
@@ -211,4 +211,5 @@ def run(exp_id: str = "exp_local_demo"):
 if __name__ == "__main__":
     import sys
     exp = sys.argv[1] if len(sys.argv) > 1 else "exp_local_demo"
-    run(exp)
+    seed = int(sys.argv[2]) if len(sys.argv) > 2 else 42
+    run(exp, seed)

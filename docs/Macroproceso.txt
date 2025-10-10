@@ -371,3 +371,92 @@ Tu proyecto, según la descripción en Macroproceso.txt, está bien alineado con
 **Conclusión:**  
 Tu proyecto cumple con los requisitos y objetivos descritos en el Macroproceso.  
 Solo asegúrate de mantener la documentación, los scripts y los experimentos actualizados y bien organizados para facilitar la replicabilidad y el análisis.
+
+\n
+ANEXOS
+=======
+
+Anexo A. Mapeo de artefactos del repositorio al Macroproceso
+------------------------------------------------------------
+
+- Arquitectura y orquestación experimental:
+  - python-analysis/api/main.py → Servicio FastAPI: preprocesamiento, entrenamiento (RF/SVM), evaluación y métricas (tiempo_ms, cpu_avg, mem_peak_mb, energía).
+  - python-analysis/simulate_experiment.py → Cliente que orquesta las fases del experimento contra la API.
+  - python-analysis/report_run.py → Reporte HTML por experimento (incluye energía si está disponible).
+  - python-analysis/aggregate_metrics.py → Agregación de métricas de todos los experimentos en CSV.
+  - python-analysis/stats_analysis.py → Pruebas de permutación (tiempo, energía, accuracy/f1) entre grupos (control vs treatment).
+
+- Scripts de ejecución:
+  - scripts/run_experiment.ps1 → Ejecuta un experimento, acepta -Group (control|treatment), -Seed, -Monitored, genera meta.json y reportes.
+  - scripts/run_batch.ps1 → Corre lotes balanceados por grupo, agrega y ejecuta análisis estadístico al final.
+  - scripts/generate_daily_docs.ps1 → Índices diarios y master de documentación.
+
+- Datos y resultados:
+  - data/results/<experimentId>/ → Carpeta por experimento (prep/, models/, eval/, logs/, monitor/, report/, meta.json).
+  - data/results/aggregate_metrics.csv → Agregado de métricas por experimento/etapa.
+  - data/results/stats_summary.{md,json} → Resumen comparativo entre grupos.
+
+- Documentación y tareas:
+  - docs/experiments.md → Guía de ejecución, agregación y análisis.
+  - docs/automation.md → Automatización de índices diarios.
+  - docs/baf_integration_plan.md → Opciones de integración BAF.
+  - .vscode/tasks.json → Tareas para ejecutar operaciones con un clic.
+
+
+Anexo B. Método de estimación de energía (proxy)
+------------------------------------------------
+
+- Objetivo: estimar el consumo energético durante el entrenamiento y normalizar por carga procesada.
+- Variables registradas: cpu_avg (%), tiempo de entrenamiento (ms), memoria pico (MB) y datos procesados (MB) durante la fase de entrenamiento.
+- Parámetro configurable: CPU_POWER_W (vatios promedio de CPU). Si no se define, por defecto 35 W.
+- Fórmulas empleadas:
+  - time_s = time_ms / 1000
+  - energy_j_total = CPU_POWER_W × (cpu_avg / 100) × time_s
+  - energy_j_per_mb = energy_j_total / MB_procesados
+  - Definiciones extendidas de eficiencia y rendimiento:
+    - n_train = número de registros usados para entrenar.
+    - MB_procesados = memoria estimada de X_train e y_train (pandas.memory_usage) convertida a MB.
+    - records_per_s = n_train / time_s
+    - data_mb_per_s = MB_procesados / time_s
+    - energy_j_per_record = energy_j_total / n_train
+    - efficiency_cpu_rps_per_pct = records_per_s / cpu_avg  (registros por segundo por cada 1% de CPU)
+    - efficiency_mem_rps_per_mb = records_per_s / mem_peak_mb (registros por segundo por MB pico de memoria)
+- Implementación:
+  - Cálculo en python-analysis/api/main.py dentro del endpoint de entrenamiento; métricas retornadas en el modelo TrainMetrics.
+  - Propagación a aggregate_metrics.py y visualización en report_run.py.
+  - Comparación inferencial incluida en stats_analysis.py (permutation test por etapa TRAIN_*).
+  - Visualización en el dashboard web (FastAPI templates) y en reportes por experimento.
+- Supuestos y limitaciones:
+  - Es una aproximación basada en potencia promedio y uso de CPU; no mide consumo eléctrico real del sistema completo.
+  - La potencia CPU_POWER_W debe ajustarse al hardware para mejorar la fidelidad.
+  - Normalización por MB procesados estimados vía memory_usage de pandas.
+  - Las eficiencias derivadas (por CPU y por memoria) sirven como indicadores comparativos; no sustituyen perfiles energéticos directos.
+
+
+Anexo C. Procedimiento de ejecución y análisis (replicabilidad)
+---------------------------------------------------------------
+
+1) Preparación
+   - Crear/activar entorno virtual (.venv) e instalar requirements.
+   - Opcional: definir $env:CPU_POWER_W para ajustar el proxy de energía.
+
+2) Ejecución de un experimento
+   - Usar VS Code → Tasks → "Experiments: Run single (treatment, monitored)" o
+     PowerShell: scripts/run_experiment.ps1 -ExperimentId <id> -Group <control|treatment> -Monitored -MonitorSeconds 120 -Report -Seed 42
+
+3) Lote control vs treatment
+   - VS Code → Tasks → "Experiments: Run batch (control vs treatment)" o
+     PowerShell: scripts/run_batch.ps1 -Repeats 10 -SeedBase 42 -MonitorSeconds 60
+
+4) Agregación y análisis
+   - Agregar métricas: python-analysis/aggregate_metrics.py → data/results/aggregate_metrics.csv
+   - Análisis estadístico: python-analysis/stats_analysis.py → data/results/stats_summary.md/.json
+
+5) Evidencia y reporte
+   - Reporte por experimento: data/results/<id>/report/index.html
+   - Índices de documentación diaria: docs/YYYY-MM-DD/index.md y docs/INDEX_BY_DATE.md (generados por scripts/generate_daily_docs.ps1)
+
+6) Interpretación
+   - Revisar p-values (< 0.05) y tamaños de efecto entre grupos.
+   - Correlacionar tiempos, uso de CPU/memoria y energía por MB para conclusiones integrales.
+

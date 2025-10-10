@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Listado de Experimentos</h2>
+{% if experiments %}
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Grupo</th>
+      <th>Creado (UTC)</th>
+      <th>Detalle</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for e in experiments %}
+    <tr>
+      <td>{{ e.id }}</td>
+      <td>{{ e.group or '-' }}</td>
+      <td>{{ e.created_utc or '-' }}</td>
+      <td><a href="/experiments/{{ e.id }}">Ver</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay experimentos todavía.</p>
+{% endif %}
+
+{% if stats_md %}
+<h2>Resumen Estadístico</h2>
+<pre class="markdown-block">{{ stats_md }}</pre>
+{% endif %}
+{% endblock %}
