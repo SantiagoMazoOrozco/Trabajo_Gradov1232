@@ -3,6 +3,11 @@
 <h2>Experimento: {{ exp.id }}</h2>
 <p><a href="/">← Volver</a></p>
 
+{# Badge que indica orquestador Java si meta.orchestrator == 'java-cli' o si hay events_jade.jsonl #}
+{% if (exp.meta and exp.meta.get('orchestrator') == 'java-cli') or ('events_jade.jsonl' in (exp.raw_event_filenames or [])) %}
+  <p><strong class="badge">Orquestado: Java prototype</strong></p>
+{% endif %}
+
 <h3>Métricas de Entrenamiento</h3>
 {% if exp.train %}
 <table>
