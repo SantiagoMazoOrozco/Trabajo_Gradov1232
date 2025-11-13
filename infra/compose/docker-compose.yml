@@ -1,0 +1,70 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: backend/Dockerfile
+    container_name: monitoring_backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - CPU_POWER_W=${CPU_POWER_W:-60}
+    mem_limit: 2g
+    # Limit to ~2 CPUs; for strict core pinning, run experiments with taskset on host or use runtime-specific options
+    cpus: "2.0"
+    volumes:
+      - ../../data/results/_server_state:/app/data/results/_server_state
+      - ../../data/results/_server_logs:/app/data/results/_server_logs
+      - ../../data/results/_jade_logs:/app/data/results/_jade_logs
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: monitoring_prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../data/results/_server_state:/var/opt/state:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=7d"
+      - "--web.enable-lifecycle"
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: monitoring_grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=marcusolsson-json-datasource
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning:ro
+      - grafana-storage:/var/lib/grafana
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: monitoring_node_exporter
+    restart: unless-stopped
+    network_mode: bridge
+    pid: "host"
+    # expose default metrics port to compose network; Prometheus will reach this container by name:9100
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($|/)"
+
+volumes:
+  grafana-storage:

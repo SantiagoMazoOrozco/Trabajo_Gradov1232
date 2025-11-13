@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Visualización Integrada</h2>
+<p>Panel general (Grafana) y snapshot rápido de métricas Prometheus.</p>
+<section>
+  <h3>Panel Grafana (Overview)</h3>
+  <iframe class="grafana-embed" src="http://localhost:3000/d/sma-overview/sma-overview?orgId=1&refresh=10s" loading="lazy"></iframe>
+</section>
+<section>
+  <h3>Métricas Prometheus (último scrape)</h3>
+  <pre style="white-space:pre-wrap;font-size:.75rem;background:#111;color:#eee;padding:.75rem;border-radius:6px;">{{ metrics_text }}</pre>
+</section>
+{% endblock %}

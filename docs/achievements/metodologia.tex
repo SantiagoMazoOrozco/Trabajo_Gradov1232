@@ -1,0 +1,44 @@
+% Capítulo de Metodología (LaTeX)
+\chapter{Metodología}
+\label{chap:metodologia}
+
+Este capítulo sintetiza: \textbf{cómo fue} (método y ejecución), \textbf{por qué se usó} (justificación) y \textbf{para qué se usó} (propósito y alcance), seguido del detalle del enfoque cuantitativo--cualitativo, el diseño, la operacionalización de variables, los instrumentos, el plan analítico, y consideraciones de resiliencia, escalabilidad, validez y ética.
+
+\section{Síntesis: cómo, por qué y para qué}
+\begin{itemize}
+  \item \textbf{Cómo fue}: Enfoque mixto con primacía cuantitativa y complemento cualitativo; investigación aplicada; diseño experimental o cuasiexperimental con grupo control (centralizado) y tratamiento (SMA). Pipeline PREPROCESS $\to$ TRAIN $\to$ EVAL con instrumentación (Prometheus/Grafana), registro de eventos y agregación a CSV.
+  \item \textbf{Por qué se usó}: El componente cuantitativo permite probar hipótesis y atribuir efectos de la arquitectura sobre eficiencia y energía bajo condiciones controladas; el cualitativo aporta comprensión ética y sociotécnica. La dimensión energética es clave para sostenibilidad y comparabilidad (J/MB, W/registro).
+  \item \textbf{Para qué se usó}: Evaluar el efecto de SMA vs. arquitectura centralizada en tiempo, throughput, CPU, memoria y energía; así como propiedades operativas (resiliencia, adaptabilidad) y escalabilidad, generando evidencia para decisiones de arquitectura.
+\end{itemize}
+
+\section{Enfoque metodológico}
+Enfoque mixto (cuantitativo predominante y cualitativo interpretativo), investigación aplicada orientada a un prototipo operativo, con diseño experimental o cuasiexperimental entre grupos control y tratamiento bajo condiciones equivalentes.
+
+\section{Operacionalización de variables}
+\subsection*{Variable independiente (VI)}
+Tipo de arquitectura: (i) centralizada (control), (ii) SMA en JADE (tratamiento).
+
+\subsection*{Variables dependientes (VD)}
+\begin{itemize}
+  \item Eficiencia de procesamiento: tiempo total (ms/s), throughput (reg/ms o reg/s), CPU promedio (\%), memoria (MB), eficiencia por \%CPU y por MB.
+  \item Eficiencia energética: Joules por MB (\\(J = W \times s\\)), potencia promedio (watts-first: RAPL/powercap o proxy calibrable), normalizaciones (J/MB, W/registro).
+  \item Adaptabilidad y resiliencia: tiempo de respuesta a eventos (s), tasa de reconfiguración exitosa (\%), fallos recuperados (conteo), eficiencia adaptativa (tiempo medio de recuperación por evento resuelto).
+  \item Escalabilidad: estabilidad de métricas ante incrementos de volumen de datos (filas/MB).
+\end{itemize}
+
+\section{Instrumentos, datos y procedimiento}
+Instrumentación con Prometheus (raspado 1 s) y Grafana (dashboards versionados); backend de métricas, registro de eventos y metadatos por corrida; scripts de ejecución, agregación y análisis. Dataset sintético reproducible; resultados por ejecución (meta, eventos, reportes) y consolidado CSV. Procedimiento: (i) preparación y dataset, (ii) corridas control/tratamiento, (iii) medición y agregación, (iv) derivación de indicadores compuestos, (v) análisis y visualización.
+
+\section{Plan de análisis}
+Análisis descriptivo (medidas de tendencia y dispersión por algoritmo y grupo) y contrastivo (t-test o Mann--Whitney según supuestos, intervalos de confianza, tamaño de efecto de Cohen). Visualización con paneles y reportes.
+
+\section{Validez y ética}
+Validez interna mediante control de semillas/dataset/carga y condiciones equiparables; validez de constructo a través de métricas energéticas normalizadas e interpretación según perfil de I/O; validez externa limitada por dataset sintético (se proyectan datos reales). Ética energética: transparencia de suposiciones (RAPL/proxy) y reporte reproducible.
+
+\section{Notas y consideraciones}
+Cuando no hay telemetría energética directa, se utiliza un proxy de potencia CPU calibrable; los Joules se derivan con la duración. Se documentan unidades y normalizaciones para comparabilidad entre escenarios.
+
+% Referencias cruzadas sugeridas (actualizar labels/rutas en el documento principal de la tesis)
+% - Arquitectura y puente JADE (capítulo/archivo correspondiente)
+% - Especificación de monitoreo y plan energético
+% - Capítulos de cumplimiento del objetivo general y objetivos específicos

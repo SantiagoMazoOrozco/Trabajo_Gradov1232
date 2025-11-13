@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 39,
+  "title": "SMA Energy",
+  "version": 1,
+  "timezone": "browser",
+  "panels": [
+    { "type": "timeseries", "title": "Avg watts", "targets": [{ "expr": "avg_watts" }] },
+    { "type": "timeseries", "title": "Watts per MB", "targets": [{ "expr": "watts_per_mb" }] },
+    { "type": "timeseries", "title": "Joules total (derived)", "targets": [{ "expr": "energy_j_total" }] },
+    { "type": "timeseries", "title": "Joules per MB (derived)", "targets": [{ "expr": "energy_j_per_mb" }] }
+  ],
+  "templating": { "list": [] }
+}

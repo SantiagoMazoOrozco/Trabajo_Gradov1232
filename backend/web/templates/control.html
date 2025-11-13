@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Panel de Control Experimentos</h2>
+<p>Ejecuta experimentos y operaciones auxiliares desde la interfaz. Las acciones usan scripts existentes.</p>
+<form method="post" action="/control/run-single" style="margin-bottom:1rem;">
+  <fieldset>
+    <legend>Ejecutar Experimento Único</legend>
+    <label>Grupo:
+      <select name="group">
+        <option value="control">control</option>
+        <option value="treatment" selected>treatment</option>
+      </select>
+    </label>
+    <label>Seed:
+      <input type="number" name="seed" value="42" />
+    </label>
+    <button type="submit">Run single</button>
+  </fieldset>
+</form>
+<form method="post" action="/control/run-batch" style="margin-bottom:1rem;">
+  <fieldset>
+    <legend>Ejecutar Batch (control vs treatment)</legend>
+    <label>Repeticiones:
+      <input type="number" name="repeats" value="5" min="1" />
+    </label>
+    <label>Monitor (segundos):
+      <input type="number" name="monitor" value="30" min="0" />
+    </label>
+    <button type="submit">Run batch</button>
+  </fieldset>
+</form>
+<form method="post" action="/control/aggregate" style="margin-bottom:1rem;">
+  <fieldset>
+    <legend>Agregación Métricas</legend>
+    <button type="submit">Aggregate metrics</button>
+  </fieldset>
+</form>
+<form method="post" action="/control/stats" style="margin-bottom:1rem;">
+  <fieldset>
+    <legend>Análisis Estadístico</legend>
+    <button type="submit">Run stats analysis</button>
+  </fieldset>
+</form>
+<section>
+  <h3>Último resultado</h3>
+  <pre style="white-space:pre-wrap;background:#222;color:#eee;padding:.75rem;border-radius:6px;font-size:.8rem;">{{ last_output }}</pre>
+</section>
+{% endblock %}

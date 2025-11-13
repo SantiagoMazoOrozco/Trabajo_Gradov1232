@@ -53,7 +53,7 @@ function Start-ApiOnce {
         Write-Host "Starting API server on $($ApiHostParam):$($portTry) ..."
         $script:apiLogPath = Join-Path $logsDir ("uvicorn_batch_" + (Get-Date -Format "yyyyMMdd_HHmmss") + "_" + $portTry + ".log")
         $script:apiErrPath = $script:apiLogPath + ".err"
-        $args = @("-m","uvicorn","python-analysis.api.main:app","--host",$ApiHostParam,"--port",$portTry,"--log-level","info")
+    $args = @("-m","uvicorn","backend.api.main:app","--host",$ApiHostParam,"--port",$portTry,"--log-level","info")
         $script:apiProcess = Start-Process -FilePath $py -ArgumentList $args -RedirectStandardOutput $script:apiLogPath -RedirectStandardError $script:apiErrPath -PassThru -WindowStyle Hidden
         Start-Sleep -Milliseconds 300
         if (Wait-For-Health -Url ("http://" + $ApiHostParam + ":" + $portTry + "/health") -TimeoutSec 30) {

@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 39,
+  "title": "Tesis — SMA: Eficiencia y Energía (Minimal)",
+  "version": 1,
+  "timezone": "browser",
+  "tags": ["tesis", "sma", "energy", "efficiency"],
+  "panels": [
+    {
+      "type": "row",
+      "title": "Eficiencia computacional",
+      "collapsed": false,
+      "panels": [
+        {
+          "type": "timeseries",
+          "title": "CPU % avg (TRAIN)",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+          "targets": [{"expr": "train_cpu_avg_percent_last"}]
+        },
+        {
+          "type": "timeseries",
+          "title": "Mem peak (MB, TRAIN)",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+          "targets": [{"expr": "train_mem_peak_mb_last"}]
+        },
+        {
+          "type": "stat",
+          "title": "Throughput (records/s)",
+          "gridPos": {"h": 6, "w": 12, "x": 0, "y": 8},
+          "options": {"reduceOptions": {"calcs": ["last"], "values": false}},
+          "targets": [{"expr": "train_records_per_s_last"}]
+        },
+        {
+          "type": "stat",
+          "title": "Datos (MB/s)",
+          "gridPos": {"h": 6, "w": 12, "x": 12, "y": 8},
+          "options": {"reduceOptions": {"calcs": ["last"], "values": false}},
+          "targets": [{"expr": "train_data_mb_per_s_last"}]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Energía (watts-first)",
+      "collapsed": false,
+      "panels": [
+        {
+          "type": "timeseries",
+          "title": "Potencia CPU (RAPL/proxy)",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 14},
+          "targets": [
+            {"expr": "cpu_package_power_w"},
+            {"expr": "cpu_power_w_proxy"}
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Potencia promedio TRAIN (W)",
+          "gridPos": {"h": 6, "w": 12, "x": 12, "y": 14},
+          "options": {"reduceOptions": {"calcs": ["last"], "values": false}},
+          "targets": [{"expr": "train_avg_watts_last"}]
+        },
+        {
+          "type": "stat",
+          "title": "W/MB (TRAIN)",
+          "gridPos": {"h": 6, "w": 12, "x": 0, "y": 22},
+          "options": {"reduceOptions": {"calcs": ["last"], "values": false}},
+          "targets": [{"expr": "train_watts_per_mb_last"}]
+        },
+        {
+          "type": "stat",
+          "title": "W/registro (TRAIN)",
+          "gridPos": {"h": 6, "w": 12, "x": 12, "y": 22},
+          "options": {"reduceOptions": {"calcs": ["last"], "values": false}},
+          "targets": [{"expr": "train_watts_per_record_last"}]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Progreso de experimentos",
+      "collapsed": false,
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Último experimento",
+          "gridPos": {"h": 5, "w": 8, "x": 0, "y": 28},
+          "options": {"reduceOptions": {"calcs": ["last"], "values": false}},
+          "targets": [{"expr": "experiment_last_id"}]
+        },
+        {
+          "type": "gauge",
+          "title": "Etapa actual (índice)",
+          "gridPos": {"h": 5, "w": 8, "x": 8, "y": 28},
+          "options": {"reduceOptions": {"calcs": ["last"], "values": false}},
+          "targets": [{"expr": "experiment_current_stage_idx"}]
+        },
+        {
+          "type": "stat",
+          "title": "Duración etapa (s)",
+          "gridPos": {"h": 5, "w": 8, "x": 16, "y": 28},
+          "options": {"reduceOptions": {"calcs": ["last"], "values": false}},
+          "targets": [{"expr": "experiment_current_stage_elapsed_seconds"}]
+        }
+      ]
+    }
+  ],
+  "templating": {"list": []}
+}

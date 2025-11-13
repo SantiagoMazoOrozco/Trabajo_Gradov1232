@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Experimentos</h2>
+{% if experiments %}
+<table>
+  <thead>
+    <tr><th>Id</th><th>Grupo</th><th>Reporte</th></tr>
+  </thead>
+  <tbody>
+    {% for e in experiments %}
+      <tr>
+        <td><a href="/experiments/{{ e.id }}">{{ e.id }}</a></td>
+        <td>{{ e.group or '-' }}</td>
+        <td>{% if e.has_report %}<a href="/data/results/{{ e.id }}/report/report.html" target="_blank">Ver</a>{% else %}-{% endif %}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+{% else %}
+<p>No hay experimentos aún.</p>
+{% endif %}
+
+<h2>Monitoreo</h2>
+<p>
+  <a href="http://localhost:3000/d/sma-overview/sma-overview" target="_blank">Abrir Grafana · SMA Overview</a>
+  &nbsp;|&nbsp;
+  <a href="http://localhost:9090/targets" target="_blank">Prometheus Targets</a>
+  &nbsp;|&nbsp;
+  <a href="/metrics" target="_blank">/metrics (este backend)</a>
+</p>
+
+<h2>Resumen estadístico</h2>
+{% if stats_md %}
+<pre class="md">{{ stats_md }}</pre>
+{% else %}
+<p>stats_summary.md no encontrado.</p>
+{% endif %}
+{% endblock %}

@@ -35,3 +35,18 @@ data/results/
 # ==== Otros ====
 coverage/
 .dist/
+.localtmp/
+.localjdk/
+.localmaven/
+
+# ==== Snapshots y temporales locales ====
+tmp_*.html
+*~
+*.swp
+*.swo
+*.orig
+*.bak
+
+# Archivos accidentales vistos en el repo
+dk install maven
+kipping tests

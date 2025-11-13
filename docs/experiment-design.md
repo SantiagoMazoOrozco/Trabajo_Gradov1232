@@ -73,5 +73,6 @@
 | Variabilidad hardware | Sesgos en tiempo | Registrar recursos y repetir |
 | Desincronización agentes | Bloqueos | Timeouts y watchdog |
 
-## 11. Versionado del Documento
-Incrementar sección de cambios con cada actualización relevante.
+> Documento consolidado: ahora vive en `docs/methodology/experiment-design.md`.
+>
+> Usa el índice de metodología: `docs/methodology/README.md`.

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Experimento: {{ exp_id }}</h2>
+<p>Grupo: {{ group or '-' }}</p>
+
+{% if report_url %}
+<p><a href="{{ report_url }}" target="_blank">Abrir reporte HTML</a></p>
+{% endif %}
+
+{% if rows %}
+<table>
+  <thead>
+    <tr>
+      <th>stage</th><th>time_ms</th><th>cpu_avg</th><th>mem_peak_mb</th>
+      <th>records_per_s</th><th>watts_per_mb</th><th>accuracy</th><th>f1</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td>{{ r.stage }}</td>
+      <td>{{ r.time_ms or '-' }}</td>
+      <td>{{ r.cpu_avg or '-' }}</td>
+      <td>{{ r.mem_peak_mb or '-' }}</td>
+      <td>{{ r.records_per_s or '-' }}</td>
+      <td>{{ r.watts_per_mb or '-' }}</td>
+      <td>{{ r.accuracy or '-' }}</td>
+      <td>{{ r.f1 or '-' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Sin filas en aggregate_metrics para este experimento.</p>
+{% endif %}
+{% endblock %}

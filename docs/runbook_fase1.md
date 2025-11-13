@@ -31,7 +31,7 @@ Abrir 2 terminales PowerShell en la raíz del repo:
 Terminal A (API):
 ```powershell
 .\.venv\Scripts\Activate.ps1
-uvicorn python-analysis.api.main:app --host 127.0.0.1 --port 8000 --log-level warning
+uvicorn backend.api.main:app --host 127.0.0.1 --port 8000 --log-level warning
 ```
 
 Terminal B (simulación):

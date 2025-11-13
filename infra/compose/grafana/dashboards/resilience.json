@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 39,
+  "title": "SMA Resilience",
+  "version": 1,
+  "timezone": "browser",
+  "panels": [
+    { "type": "stat", "title": "Faults injected", "targets": [{ "expr": "fault_injected_count" }] },
+    { "type": "stat", "title": "Faults recovered", "targets": [{ "expr": "fault_recovered_count" }] },
+    { "type": "timeseries", "title": "Recovery time (ms)", "targets": [{ "expr": "recovery_time_ms_mean" }] },
+    { "type": "gauge", "title": "Recovery success rate", "targets": [{ "expr": "recovery_success_rate" }] }
+  ],
+  "templating": { "list": [] }
+}

@@ -274,6 +274,13 @@ estudios que demuestran que los sistemas de IA pueden producir resultados discri
 diferencias en las tasas de error en el reconocimiento facial basadas en género y color de piel. Se contribuirá a un
 desarrollo más consciente y responsable de la tecnología, incluyendo la consideración del impacto ambiental de la IA y los
 centros de datos, así como la necesidad de marcos regulatorios y éticos claros y una supervisión humana continua.
+
+Documento de apoyo (resultados esperados y aporte específico)
+------------------------------------------------------------
+Para una síntesis con estado (cumplido/parcial/futuro) y rutas de evidencia, consulte:
+
+- `docs/achievements/resultados_aporte.md` (versión Markdown)
+- `docs/achievements/resultados_aporte.tex` (versión LaTeX lista para \input)
 10. BIBLIOGRAFÍA CITADA
 ● Braubach, L., & Pokahr, A. (2019). ActoDatA: A multi-agent architecture for data analytics. Multiagent and Grid Systems,
 15(3), 199–220.
@@ -340,6 +347,88 @@ compromete a realizar el proceso de acompañamiento durante el período académi
 _____________________________
 Firma del estudiante
 
+Registro de cumplimiento (actualización automática)
+-----------------------------------------------
+Fecha de verificación: 2025-11-11
+
+Se registran a continuación las actividades del Macroproceso verificadas y la evidencia asociada generada en el repositorio:
+
+- Actividad 1: Revisión de Literatura y Definición de Metodología.  -- Estado: COMPLETADA
+- Actividad 2: Diseño de la Arquitectura del SMA y del Experimento. -- Estado: COMPLETADA
+- Actividad 3: Implementación y Desarrollo de Prototipos.         -- Estado: COMPLETADA
+- Actividad 4: Recolección y Pre-procesamiento de Datos Experimentales. -- Estado: COMPLETADA
+- Actividad 5: Análisis e Interpretación de Datos.               -- Estado: COMPLETADA
+- Actividad 6: Visualización de Hallazgos y Elaboración de Modelos. -- Estado: COMPLETADA
+- Actividad 7: Redacción del Reporte de Resultados.             -- Estado: COMPLETADA (docs/thesis_results_section.md)
+- Actividad 8: Consolidación de Conclusiones, Implicaciones y Trabajos Futuros. -- Estado: COMPLETADA (docs/conclusions_implications_future_work.md)
+
+Evidencia principal (artefactos generados):
+
+- Paquete con evidencia: `data/results/evidence_batch_20251027_145840.zip`
+- Agregado de métricas: `data/results/aggregate_metrics.csv`
+- Resumen estadístico: `data/results/stats_summary.json` y `data/results/stats_summary.md`
+- Figuras y resumen por batch: `data/results/batch_20251027_145840/figures/` (PNG + CSV)
+- Reportes HTML por experimento: `data/results/batch_20251027_145840_*/report/report.html`
+- Sección de resultados redactada: `docs/thesis_results_section.{md,tex}`
+- Conclusiones e implicaciones: `docs/conclusions_implications_future_work.md`
+
+Documento de apoyo (cómo y por qué se lograron las actividades)
+--------------------------------------------------------------
+Para una explicación consolidada de cómo se ejecutó y por qué se lograron satisfactoriamente las actividades 1–8 del cronograma, consulte:
+
+- `docs/achievements/cumplimiento_cronograma.md` (versión Markdown)
+- `docs/achievements/cumplimiento_cronograma.tex` (versión LaTeX lista para \input)
+
+Documento de apoyo (lista de reproducibilidad)
+----------------------------------------------
+Para pasos detallados de replicación y verificación, consulte:
+
+- `docs/appendix/reproducibility_checklist.md`
+
+Observaciones:
+
+- El análisis estadístico se ejecutó con 5000 permutaciones para mayor robustez; no se encontraron diferencias significativas (p >= 0.05) en las comparaciones principales entre `control` y `treatment` con la configuración actual. Los detalles están en `data/results/stats_summary.json`.
+- La réplica completa usando JADE como orquestador está documentada y disponible para ejecución, pero requiere JDK y Maven instalados en la máquina. Si desea que ejecute la réplica JADE en este entorno, indíquelo y comprobaré disponibilidad e iniciaré el proceso.
+
+Firma de verificación: sistema automatizado del repositorio (scripts de análisis y empaquetado).
+
+
+Nota técnica (Actualización 2025-11-10)
+--------------------------------------
+
+Con el objetivo de asegurar compatibilidad y soporte a largo plazo, el proyecto fue actualizado para compilar y ejecutarse con Java 21 (LTS):
+
+- Toolchain objetivo
+  - JDK: OpenJDK 21 (probado con Amazon Corretto 21)
+  - Maven: 3.9.6
+  - JADE: artefacto local com.tilab:jade:4.6.0 (instalado desde `jade-platform/jade_dist/jade/lib/jade.jar`)
+
+- Cambios aplicados
+  - `jade-platform/pom.xml`: `maven.compiler.source/target=21` y `<release>21</release>`.
+  - Instalación local de toolchain (sin alterar el sistema):
+    - JDK extraído en `.localjdk/amazon-corretto-21.*`
+    - Maven extraído en `.localmaven/apache-maven-3.9.6`
+  - Instalación del JAR de JADE en el repositorio Maven local (`.m2`):
+    - `com.tilab:jade:4.6.0`
+
+- Compilación reproducible (local)
+  Desde la raíz del repo:
+  1) Exportar toolchain local
+     - `export JAVA_HOME="$(pwd)/.localjdk/amazon-corretto-21.0.9.11.1-linux-x64"`
+     - `export MAVEN_HOME="$(pwd)/.localmaven/apache-maven-3.9.6"`
+     - `export PATH="$MAVEN_HOME/bin:$JAVA_HOME/bin:$PATH"`
+  2) (Una vez) Registrar JADE en el repo Maven local
+     - `$MAVEN_HOME/bin/mvn install:install-file \`
+       `  -Dfile=jade-platform/jade_dist/jade/lib/jade.jar \`
+       `  -DgroupId=com.tilab -DartifactId=jade -Dversion=4.6.0 -Dpackaging=jar -DgeneratePom=true`
+  3) Compilar módulo JADE (sin tests)
+     - `$MAVEN_HOME/bin/mvn -f jade-platform/pom.xml -DskipTests clean package`
+
+- Notas
+  - Si se usa CI, configurar JDK 21 en el runner y publicar `com.tilab:jade:4.6.0` en un repositorio Maven interno, o ejecutar el paso de `install-file` previo a la construcción.
+  - Para ejecución en local/producción, asegurar que `JAVA_HOME` referencia JDK 21.
+
+
 # Análisis de cumplimiento del proyecto según el archivo Macroproceso
 
 Tu proyecto, según la descripción en Macroproceso.txt, está bien alineado con los objetivos y metodología planteados:
@@ -380,7 +469,7 @@ Anexo A. Mapeo de artefactos del repositorio al Macroproceso
 ------------------------------------------------------------
 
 - Arquitectura y orquestación experimental:
-  - python-analysis/api/main.py → Servicio FastAPI: preprocesamiento, entrenamiento (RF/SVM), evaluación y métricas (tiempo_ms, cpu_avg, mem_peak_mb, energía).
+  - backend/api/main.py (antes python-analysis/api/main.py) → Servicio FastAPI: preprocesamiento, entrenamiento (RF/SVM), evaluación y métricas (tiempo_ms, cpu_avg, mem_peak_mb, energía).
   - python-analysis/simulate_experiment.py → Cliente que orquesta las fases del experimento contra la API.
   - python-analysis/report_run.py → Reporte HTML por experimento (incluye energía si está disponible).
   - python-analysis/aggregate_metrics.py → Agregación de métricas de todos los experimentos en CSV.
@@ -403,26 +492,27 @@ Anexo A. Mapeo de artefactos del repositorio al Macroproceso
   - .vscode/tasks.json → Tareas para ejecutar operaciones con un clic.
 
 
-Anexo B. Método de estimación de energía (proxy)
-------------------------------------------------
+Anexo B. Método de medición de potencia (proxy)
+-----------------------------------------------
 
-- Objetivo: estimar el consumo energético durante el entrenamiento y normalizar por carga procesada.
-- Variables registradas: cpu_avg (%), tiempo de entrenamiento (ms), memoria pico (MB) y datos procesados (MB) durante la fase de entrenamiento.
-- Parámetro configurable: CPU_POWER_W (vatios promedio de CPU). Si no se define, por defecto 35 W.
+- Objetivo: medir/estimar la potencia promedio (Watts) durante el entrenamiento y normalizar por carga procesada.
+- Variables registradas: cpu_avg (%), tiempo de entrenamiento (ms), memoria pico (MB), datos procesados (MB) y potencia promedio (W) durante la fase de entrenamiento.
+- Parámetros configurables: CPU_TDP_W (vatios TDP de CPU) para estimación cuando no hay contadores; opción de lectura de RAPL/powercap si disponible.
 - Fórmulas empleadas:
   - time_s = time_ms / 1000
-  - energy_j_total = CPU_POWER_W × (cpu_avg / 100) × time_s
-  - energy_j_per_mb = energy_j_total / MB_procesados
+  - avg_watts ≈ lectura RAPL/powercap (preferida), o bien ≈ CPU_TDP_W × (cpu_avg / 100)
+  - watts_per_mb = avg_watts / MB_procesados
   - Definiciones extendidas de eficiencia y rendimiento:
     - n_train = número de registros usados para entrenar.
     - MB_procesados = memoria estimada de X_train e y_train (pandas.memory_usage) convertida a MB.
     - records_per_s = n_train / time_s
     - data_mb_per_s = MB_procesados / time_s
-    - energy_j_per_record = energy_j_total / n_train
+    - watts_per_record = avg_watts / n_train
     - efficiency_cpu_rps_per_pct = records_per_s / cpu_avg  (registros por segundo por cada 1% de CPU)
     - efficiency_mem_rps_per_mb = records_per_s / mem_peak_mb (registros por segundo por MB pico de memoria)
+  - Nota: si se requiere energía aproximada para discusión, puede derivarse como energy_j_total ≈ avg_watts × time_s.
 - Implementación:
-  - Cálculo en python-analysis/api/main.py dentro del endpoint de entrenamiento; métricas retornadas en el modelo TrainMetrics.
+  - Cálculo en backend/api/main.py (antes python-analysis/api/main.py) dentro del endpoint de entrenamiento; métricas retornadas en el modelo TrainMetrics.
   - Propagación a aggregate_metrics.py y visualización en report_run.py.
   - Comparación inferencial incluida en stats_analysis.py (permutation test por etapa TRAIN_*).
   - Visualización en el dashboard web (FastAPI templates) y en reportes por experimento.

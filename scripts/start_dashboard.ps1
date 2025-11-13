@@ -71,7 +71,7 @@ for ($i = 0; $i -lt $MaxTries; $i++) {
     $outLog = $logBase + ".log"
     $errLog = $logBase + ".err.log"
 
-    $procArgs = @('-m','uvicorn','python-analysis.api.main:app','--host',$ApiHost,'--port',$port,'--log-level','info')
+    $procArgs = @('-m','uvicorn','backend.api.main:app','--host',$ApiHost,'--port',$port,'--log-level','info')
     $proc = Start-Process -FilePath $pyExe -ArgumentList $procArgs -RedirectStandardOutput $outLog -RedirectStandardError $errLog -PassThru -WindowStyle Hidden
     if ($Verbose) { Write-Host ("Started uvicorn (PID={0}) on {1}:{2}, waiting for health..." -f $proc.Id, $ApiHost, $port) }
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title if title else 'SMA Experiments Dashboard' }}</title>
+  <link rel="stylesheet" href="/data/../backend/web/static/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simpledotcss/simple.min.css">
+  <style>
+    .header-metrics {display:flex;gap:1.2rem;flex-wrap:wrap;margin:.5rem 0;font-size:.85rem;}
+    .header-metrics span {background:#f4f4f4;padding:.25rem .5rem;border-radius:4px;}
+    .grafana-embed {width:100%;height:700px;border:0;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SMA Experiments Dashboard</h1>
+    <nav>
+      <a href="/">Inicio</a>
+      <a href="/ui">UI</a>
+      <a href="/control">Control</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <small>Datos desde data/results • {{ request.url.hostname }}</small>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,52 @@
+% Resultados Esperados y Aporte Específico
+\chapter{Resultados Esperados y Aporte Específico}
+\label{chap:resultados-aporte}
+
+Este capítulo alinea los resultados esperados y el aporte específico del Macroproceso con el estado del prototipo, indicando cumplimiento, evidencia y límites.
+
+\section{Desarrollo e Implementación de Prototipos}
+\begin{itemize}
+  \item \textbf{Herramienta multiagente para evaluación}: Orquestación JADE de PREPROCESS$\to$TRAIN$\to$EVAL con métricas. Evidencia: `agents/jade-platform/*`, `docs/architecture/bridge_jade.md`. Estado: Cumplido.
+  \item \textbf{Versión funcional de plataforma}: Backend FastAPI con `/metrics`, Prometheus+Grafana, scripts de ejecución y reportes. Evidencia: `backend/api/main.py`, `infra/compose/*`, `docs/grafana/*`. Estado: Cumplido.
+  \item \textbf{Prototipo validado cuantitativa y cualitativamente}: Smoke tests y análisis descriptivo/inferencial entre control y tratamiento; metodología documentada. Evidencia: `python-analysis/stats_analysis.py`, `data/results/stats_summary.{json,md}`, `docs/achievements/metodologia.{md,tex}`. Estado: Cumplido (prototipo).
+  \item \textbf{JADE para experimentos de eficiencia y energía}: Lotes automatizados, agregado de métricas y paneles energéticos (watts-first, J/MB). Evidencia: `scripts/run_batch.*`, `python-analysis/aggregate_metrics.py`, `docs/energy_plan.md`. Estado: Cumplido.
+  \item \textbf{Arquitectura completa SMA}: Documentación de agentes e interacciones, protocolo y mapa. Evidencia: `docs/architecture/*`. Estado: Cumplido.
+\end{itemize}
+
+\section{Evidencia de Datos y Análisis}
+\begin{itemize}
+  \item \textbf{Datos brutos y scripts}: Resultados por ejecución y agregados CSV con scripts versionados. Evidencia: `data/results/*`, `python-analysis/*.py`. Estado: Cumplido.
+  \item \textbf{Gráficos comparativos}: Figuras para tesis y visualizaciones Grafana. Evidencia: `docs/grafana/img/*`, `docs/grafana/thesis_minimal.json`. Estado: Parcial.
+  \item \textbf{Resultados de eficiencia y adaptabilidad}: Métricas homogéneas (tiempo, throughput, CPU, memoria) y energía (J/MB). Resiliencia en progreso. Evidencia: `data/results/aggregate_metrics.csv`, `docs/monitoring_spec.md`. Estado: Parcial.
+  \item \textbf{Análisis cualitativo}: Categorías y discusión en capítulos de logros/conclusiones. Evidencia: `docs/achievements/metodologia.{md,tex}`, `docs/conclusions_implications_future_work.md`. Estado: Cumplido.
+  \item \textbf{Modelos conceptuales}: Arquitectura, protocolo y mapa. Evidencia: `docs/architecture/*`. Estado: Cumplido.
+  \item \textbf{Validación/verificación}: Reportes por ejecución y smoke; sin grafos formales. Evidencia: `python-analysis/report_run.py`, `scripts/monitoring_smoke.sh`. Estado: Parcial.
+\end{itemize}
+
+\section{Documentación de la Investigación}
+\begin{itemize}
+  \item \textbf{Metodología y procedimiento}: Capítulo de metodología y guías reproducibles. Evidencia: `docs/achievements/metodologia.{md,tex}`, `docs/experiments.md`. Estado: Cumplido.
+  \item \textbf{Evidencia visual}: Capturas/paneles y reportes. Evidencia: `docs/grafana/img/*`, `data/results/*/report/report.html`. Estado: Cumplido.
+  \item \textbf{Resultados cualitativos}: Narrativa y visuales en capítulos de logros y conclusiones. Evidencia: `docs/achievements/cumplimiento_objetivo_general.{md,tex}`. Estado: Cumplido.
+  \item \textbf{Limitaciones y futuro}: Amenazas/limitaciones y roadmap. Evidencia: `docs/achievements/cumplimiento_objetivo_general.md`, `docs/future_work_roadmap.md`. Estado: Cumplido.
+\end{itemize}
+
+\section{Aporte Específico (Uso y Beneficios)}
+\begin{itemize}
+  \item \textbf{Avance metodológico}: Marco reproducible para comparar arquitecturas con energía normalizada (J/MB). Estado: Cumplido.
+  \item \textbf{Holónico + Multiagente}: No abordado en el prototipo actual. Estado: Futuro.
+  \item \textbf{Seguridad/ciberseguridad}: Fuera de alcance del prototipo. Estado: Futuro.
+  \item \textbf{Aceleración de innovación}: Pipelines y dashboards que agilizan corridas y análisis. Estado: Cumplido.
+\end{itemize}
+
+\section{Beneficios Industriales y Empresariales}
+Prototipo con potencial para eficiencia y adaptabilidad en entornos complejos (Industria 4.0). Requiere pilotos para validación industrial. Evidencia: `docs/architecture/*`, `docs/monitoring_spec.md`.
+
+\section{Impacto Social y Ambiental}
+Contribución a sostenibilidad tecnológica mediante medición energética (J/MB) y reporte transparente. Transferencia a dominios reales es trabajo futuro. Evidencia: `docs/energy_plan.md`.
+
+\section{Consideraciones Éticas y Regulatorias}
+Discusión de control humano significativo, riesgos de sesgo y reporte responsable. Evidencia: `docs/achievements/metodologia.md`, `docs/conclusions_implications_future_work.md`.
+
+\section*{Observaciones}
+En corridas actuales no se observan diferencias significativas (p $\ge$ 0.05); se sugieren escalas/datasets alternativos. Resiliencia: ampliar MTTR/p95 y paneles dedicados.

@@ -1,0 +1,157 @@
+% -*- TeX -*-
+% Plantilla trabajo de grado (versión completa)
+\documentclass[12pt,oneside]{report}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{tocloft}
+\usepackage{csquotes}
+\geometry{letterpaper, top=2.54cm, bottom=2.54cm, outer=2.54cm, inner=3.6cm}
+\onehalfspacing
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+
+% Datos de portada (editar si es necesario)
+\newcommand{\ThesisTitle}{Eficiencia y Sostenibilidad Computacional de Algoritmos de Machine Learning para la Clasificación Supervisada en Analítica de Datos: Un Enfoque Multiagente}
+\newcommand{\ThesisAuthor}{Santiago Mazo Orozco}
+\newcommand{\University}{Universidad Nacional de Colombia}
+\newcommand{\Faculty}{Facultad de Administración, Departamento de Informática y Computación}
+\newcommand{\City}{Manizales, Colombia}
+\newcommand{\Year}{2025}
+\newcommand{\DegreeTarget}{Administrador(a) de Sistemas Informáticos}
+\newcommand{\AdvisorTitle}{Profesor}
+\newcommand{\AdvisorName}{Néstor Darío Duque M}
+\newcommand{\Modality}{Trabajos investigativos – Proyecto Final}
+\newcommand{\Program}{Administración de Sistemas Informáticos}
+\newcommand{\ResearchGroup}{GAIA – Grupo de Investigación en Ambientes Inteligentes Adaptativos (en alianza con ACSIC, Universidad de Islas Baleares)}
+
+\begin{document}
+
+% Carátula
+\thispagestyle{empty}
+\begin{center}
+\Large\textbf{\ThesisTitle}\\[2cm]
+\large\ThesisAuthor\\[1.5cm]
+\University \\ \Faculty \\ \City \\ \Year
+\end{center}
+\clearpage
+
+% Portada
+\thispagestyle{empty}
+\begin{center}
+\Large\textbf{\ThesisTitle}\\[2cm]
+\large\ThesisAuthor\\[1.5cm]
+\normalsize Trabajo de grado presentado como requisito parcial para optar al título de: \\[0.2cm]
+\textbf{\DegreeTarget}\\[0.8cm]
+Director(a): \\ \AdvisorTitle~\AdvisorName\\[0.4cm]
+Modalidad del trabajo de grado: \\ \Modality\\[0.4cm]
+Programa Curricular: \\ \Program\\[0.4cm]
+Grupo de Investigación: \\ \ResearchGroup\\[1.2cm]
+\University \\ \Faculty \\ \City \\ \Year
+\end{center}
+\clearpage
+
+% Dedicatoria (opcional)
+\thispagestyle{empty}
+\begin{flushright}
+\emph{A mi familia, por su apoyo incondicional durante todo el proceso.}
+\end{flushright}
+\clearpage
+
+% Agradecimientos (opcional)
+\chapter*{Agradecimientos}
+A la Universidad Nacional de Colombia – Sede Manizales, al Departamento de Informática y Computación, y al grupo GAIA por el acompañamiento académico y técnico. Al profesor \AdvisorName{} por su dirección y valiosas sugerencias.
+\addcontentsline{toc}{chapter}{Agradecimientos}
+\clearpage
+
+% Resumen y Abstract (preliminares con numeración romana)
+\pagenumbering{roman}
+\setcounter{page}{7} % Referencia sugerida en plantilla (ajustar luego)
+
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
+\textbf{Título en español:} \ThesisTitle\\[0.2cm]
+La rápida expansión de los datos y las exigencias de procesamiento han evidenciado las limitaciones de arquitecturas centralizadas para analítica y Machine Learning (ML). Este trabajo diseña e implementa un prototipo de arquitectura basada en Sistemas Multiagente (SMA), soportada en JADE, para orquestar y evaluar el entrenamiento de algoritmos de clasificación supervisada (Random Forest y Support Vector Machine), con énfasis en eficiencia computacional y sostenibilidad energética. Se comparan dos condiciones experimentales: arquitectura centralizada (control) y arquitectura SMA (tratamiento), en escenarios simulados, controlados y replicables. Las métricas cuantitativas incluyen: tiempo de ejecución (ms), rendimiento (registros/s), uso promedio de CPU (%), memoria pico (MB) y consumo energético estimado (J/MB). La recolección y agregación de resultados se automatiza con scripts Python; el monitoreo y visualización se instrumenta con Prometheus y Grafana. El análisis estadístico (pruebas de permutación y contraste inferencial) sugiere, con la configuración actual, ausencia de diferencias significativas (p $\ge$ 0.05) entre control y tratamiento; sin embargo, la plataforma demuestra viabilidad para estudios rigurosos, reproducibles y extensibles, aportando evidencia y herramientas para evaluar eficiencia, resiliencia y sostenibilidad en ML distribuido. Se discuten implicaciones técnicas, éticas y operativas, y se proponen líneas de trabajo futuro.\\[0.2cm]
+\textbf{Palabras clave:} Sistemas Multiagente, JADE, Machine Learning, Eficiencia Computacional, Sostenibilidad Energética, Random Forest, SVM.
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\textbf{Title in English:} Computational Efficiency and Energy Sustainability of Supervised ML Classification Algorithms: A Multi-Agent Approach\\[0.2cm]
+The rapid growth of data and processing demands has exposed the limitations of centralized architectures for Analytics and Machine Learning (ML). This work designs and implements a Multi-Agent System (MAS) prototype—based on JADE—to orchestrate and evaluate the training of supervised classification algorithms (Random Forest and Support Vector Machine), focusing on computational efficiency and energy sustainability. Two experimental conditions are compared: centralized architecture (control) and MAS-based architecture (treatment), under simulated, controlled, and replicable settings. Quantitative metrics include execution time (ms), throughput (records/s), average CPU usage (%), peak memory (MB), and estimated energy consumption (J/MB). Result collection and aggregation are automated with Python scripts; monitoring and visualization are instrumented with Prometheus and Grafana. Statistical analysis (permutation tests and inferential comparisons) suggests, with the current configuration, no significant differences (p $\ge$ 0.05) between control and treatment; however, the platform proves viable for rigorous, reproducible, and extensible studies, providing evidence and tools to assess efficiency, resilience, and sustainability in distributed ML. Technical, ethical, and operational implications are discussed, along with future work.\\[0.2cm]
+\textbf{Keywords:} Multi-Agent Systems, JADE, Machine Learning, Computational Efficiency, Energy Sustainability, Random Forest, SVM.
+
+% Índices
+\tableofcontents
+\listoffigures
+\listoftables
+\clearpage
+
+% Cuerpo (numeración arábiga desde Introducción)
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter{Introducción}
+El crecimiento exponencial de datos en sensores y plataformas digitales exige arquitecturas capaces de escalar, adaptarse y ser resilientes. Los Sistemas Multiagente (SMA) ofrecen autonomía, comunicación y proactividad, adecuándose a entornos dinámicos y distribuidos. Este trabajo propone una plataforma SMA experimental, modular y replicable para evaluar algoritmos de ML supervisado (RF y SVM) con un enfoque integral en eficiencia computacional y sostenibilidad energética. Además de precisión, se consideran métricas como tiempo, \textit{throughput}, uso de CPU y memoria, y energía (J/MB), con análisis estadístico para contrastar un grupo de control centralizado frente a un tratamiento SMA.
+
+\chapter{Presentación del trabajo de grado}
+\section{Planteamiento del problema o situación abordada}
+Las soluciones centralizadas para ML presentan límites de escalabilidad y tolerancia a fallos. Se requiere evaluar arquitecturas alternativas, como los SMA, que permitan comparar eficiencia y sostenibilidad energética en condiciones controladas, con resultados confiables y replicables.
+\section{Objetivo general}
+Diseñar e implementar un prototipo de arquitectura basada en Sistemas Multiagente (SMA) para evaluar la eficiencia computacional y la sostenibilidad energética durante el entrenamiento de algoritmos de Machine Learning supervisado de clasificación, en entornos simulados de analítica de datos.
+\section{Objetivos específicos}
+\begin{enumerate}
+  \item Modelar la arquitectura de un SMA que orqueste ingesta, preprocesamiento y preparación de datos para entrenamiento.
+  \item Implementar el prototipo SMA integrando al menos RF y SVM en la fase de entrenamiento, utilizando JADE.
+  \item Evaluar eficiencia computacional y sostenibilidad energética frente a una arquitectura centralizada, midiendo tiempo, \textit{throughput}, CPU, memoria y energía (J/MB).
+  \item Analizar e interpretar resultados cuantitativos para validar eficiencia y sostenibilidad, identificando implicaciones técnicas, éticas y operativas.
+\end{enumerate}
+\section{Metodología}
+Enfoque cuantitativo con complemento cualitativo; diseño experimental con dos condiciones (control vs tratamiento) y repeticiones $\geq 10$. Variables dependientes: tiempo (ms), \textit{throughput} (reg/s), CPU (%), memoria (MB), energía (J/MB). Instrumentación: FastAPI, JADE, Prometheus/Grafana, scripts Python; pruebas de permutación ($N\geq 5000$) y tamaños de efecto.
+
+\chapter{Revisión de literatura}
+Trabajos previos muestran aplicaciones de SMA en analítica de datos y ciudades inteligentes (Braubach \& Pokahr, 2019; Paik, 2024; Kuzin et al., 2022), así como medición de eficiencia energética en ML (Rodríguez et al., 2024; Yu et al., 2022; Chung et al., 2025). Persiste un vacío en evaluaciones integrales que combinen eficiencia, adaptabilidad y sostenibilidad en un marco homogéneo.
+
+\chapter{Desarrollo}
+\section{Arquitectura técnica}
+La arquitectura integra una capa multiagente (JADE) y una capa de servicios ligeros (FastAPI) para desacoplar orquestación de instrumentación y persistencia: agentes especializados, endpoint `/metrics` y paneles en Grafana. Persistencia de resultados bajo `data/results/` y automatización con scripts.
+\section{Flujo experimental}
+Preparación, preprocesamiento, entrenamiento (RF/SVM), evaluación, agregación, análisis estadístico, visualización y empaquetado de evidencia.
+\section{Estrategia de medición y energía}
+Métricas base: `time_ms`, `cpu_avg`, `mem_peak_mb`, `records_per_s`, `data_mb_per_s`, `energy_j_total`, `energy_j_per_mb`, `accuracy`, `f1`. Derivadas: `efficiency_cpu_rps_per_pct`, `efficiency_mem_rps_per_mb`, `energy_j_per_record`. Limitaciones del proxy y plan de medición directa.
+\section{Resultados}
+En el batch principal (10 repeticiones por grupo), no se observaron diferencias significativas (p $\ge$ 0.05) entre control y tratamiento para las métricas principales. Se recomiendan cargas mayores y medición energética directa.
+
+\chapter{Conclusiones y recomendaciones}
+\section{Conclusiones}
+La plataforma SMA demuestra viabilidad técnica para orquestar y evaluar experimentos de ML con rigor y replicabilidad. En la configuración actual, no se observaron diferencias significativas entre control y tratamiento. El aporte clave es metodológico e instrumental.
+\section{Recomendaciones}
+Integrar RAPL/powercap; aumentar tamaño muestral y complejidad; extender a nuevas tareas/modelos; profundizar en resiliencia y escalabilidad; reforzar el análisis estadístico.
+
+\appendix
+\chapter{Anexo A. Mapeo de artefactos a objetivos}
+Evidencia: `backend/api/main.py`, `agents/jade-platform/*`, `python-analysis/*`, `data/results/*`, `docs/*`.
+\chapter{Anexo B. Evidencia generada (verificación 2025-11-11)}
+`aggregate_metrics.csv`, `stats_summary.json|md`, `evidence_batch_20251027_145840.zip`, figuras y reportes por experimento.
+
+\chapter*{Bibliografía}
+\addcontentsline{toc}{chapter}{Bibliografía}
+\begin{longtable}{@{}p{0.95\textwidth}@{}}
+Braubach, L., \& Pokahr, A. (2019). ActoDatA: A multi-agent architecture for data analytics. \textit{Multiagent and Grid Systems, 15}(3), 199–220.\\
+Chung, J.-W., Liu, J., Ma, J. J., Wu, R., Kweon, O. J., Xia, Y., Wu, Z., \& Chowdhury, M. (2025). The ML.ENERGY Benchmark: Toward Automated Inference Energy Measurement and Optimization. \textit{arXiv preprint}.\\
+Kuzin, A., Ivanov, D., \& Petrova, M. (2022). Multi-agent systems for tender classification. \textit{Journal of Intelligent Systems, 31}(2), 123–137.\\
+Paik, H. (2024). Smart city infrastructure: A multi-agent perspective. \textit{International Journal of Urban Computing, 12}(1), 45–59.\\
+Rodríguez, C., Degioanni, L., Kameni, L., Vidal, R., \& Neglia, G. (2024). Evaluating the Energy Consumption of Machine Learning: Systematic Literature Review and Experiments. \textit{e-print manuscript}.\\
+Yu, J. R., Chen, C. H., Huang, T. W., Lu, J. J., Chung, C. R., Lin, T. W., Wu, M. H., Tseng, Y. J., \& Wang, H. Y. (2022). Energy efficiency of inference algorithms for clinical laboratory data sets: Green artificial intelligence study. \textit{Journal of Medical Internet Research, 24}(1), e28036.\\
+Wooldridge, M. (2009). \textit{An Introduction to MultiAgent Systems} (2nd ed.). Wiley.\\
+Patel, N., et al. (2023). Next generation of multi-agent driven smart city applications and research paradigms. \textit{IEEE Access}.\\
+\end{longtable}
+
+\end{document}

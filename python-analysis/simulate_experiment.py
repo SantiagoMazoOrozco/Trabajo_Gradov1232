@@ -7,6 +7,29 @@ from datetime import datetime
 API = os.environ.get("API_BASE", "http://127.0.0.1:8000")
 
 
+def write_meta(exp_id: str, group: str = "treatment", seed: int = 42, orchestrator: str = "simulate"):
+    """Write a minimal meta.json for an experiment. Does not overwrite an existing file unless force=True.
+
+    Fields: experimentId, group, seed, orchestrator, created_utc
+    """
+    out_dir = os.path.join("data", "results", exp_id)
+    os.makedirs(out_dir, exist_ok=True)
+    meta_path = os.path.join(out_dir, "meta.json")
+    if os.path.exists(meta_path):
+        # Do not overwrite existing meta to preserve explicit group assignments
+        return meta_path
+    meta = {
+        "experimentId": exp_id,
+        "group": group,
+        "seed": int(seed),
+        "orchestrator": orchestrator,
+        "created_utc": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+    }
+    with open(meta_path, "w", encoding="utf-8") as f:
+        json.dump(meta, f, indent=2, ensure_ascii=False)
+    return meta_path
+
+
 def log_line(exp_id: str, event: str, payload: dict):
     os.makedirs(f"data/results/{exp_id}/logs", exist_ok=True)
     line = {
@@ -36,6 +59,13 @@ def load_agent_names():
 
 
 def run(exp_id: str = "exp_local_demo", seed: int = 42):
+    # Ensure a meta.json exists so aggregators include this experiment
+    group = os.environ.get("EXP_GROUP", "treatment")
+    try:
+        write_meta(exp_id, group=group, seed=seed, orchestrator="simulate")
+    except Exception:
+        # Non-fatal: continue even if metadata write fails
+        pass
     agents = load_agent_names()
     # 1) Preprocess
     log_line(exp_id, "PREPROCESS_START", {
@@ -209,7 +239,19 @@ def run(exp_id: str = "exp_local_demo", seed: int = 42):
 
 
 if __name__ == "__main__":
-    import sys
-    exp = sys.argv[1] if len(sys.argv) > 1 else "exp_local_demo"
-    seed = int(sys.argv[2]) if len(sys.argv) > 2 else 42
-    run(exp, seed)
+    import argparse
+    p = argparse.ArgumentParser(description="Simulate an experiment by calling the API endpoints")
+    p.add_argument("experiment_id", nargs="?", default="exp_local_demo")
+    p.add_argument("seed", nargs="?", default=42, type=int)
+    p.add_argument("--group", default=None, help="Group for meta.json (control|treatment)")
+    p.add_argument("--write-meta-only", action="store_true", help="Only write meta.json and exit (no API calls)")
+    args = p.parse_args()
+
+    if args.group:
+        os.environ["EXP_GROUP"] = args.group
+
+    if args.write_meta_only:
+        write_meta(args.experiment_id, group=os.environ.get("EXP_GROUP", "treatment"), seed=args.seed, orchestrator="simulate")
+        print(f"Wrote meta.json for {args.experiment_id}")
+    else:
+        run(args.experiment_id, args.seed)

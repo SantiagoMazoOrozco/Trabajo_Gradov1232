@@ -1,10 +1,7 @@
 ﻿# Índice por fecha de documentación
 
-- [2025-09-10](docs/2025-09-10/index.md)
-- [2025-09-17](docs/2025-09-17/index.md)
-- [2025-09-18](docs/2025-09-18/index.md)
-- [2025-09-24](docs/2025-09-24/index.md)
-- [2025-10-02](docs/2025-10-02/index.md)
+Consolidado anual:
+- [2025](./daily/2025.md)
 
-Nota: Los enlaces apuntan a índices diarios que referencian los documentos fuente.
+Las entradas anteriores por fecha se consolidaron en un único archivo para reducir fragmentación. Los enlaces internos preservan rutas relativas usadas en los registros originales.
 

@@ -1,6 +1,6 @@
 # UI Web Experimental
 
-Esta interfaz web ligera se monta sobre la misma aplicación FastAPI (`python-analysis/api/main.py`) y permite navegar los experimentos generados en `data/results/`.
+Esta interfaz web ligera se monta sobre la misma aplicación FastAPI (`backend/api/main.py`, antes `python-analysis/api/main.py`) y permite navegar los experimentos generados en `data/results/`.
 
 ## Rutas
 
@@ -21,15 +21,15 @@ powershell -ExecutionPolicy Bypass -File .\scripts\stop_dashboard.ps1
 Opción B — Manual (uvicorn):
 
 ```powershell
-.\.venv\Scripts\python.exe -m uvicorn python-analysis.api.main:app --host 127.0.0.1 --port 8001
+.\.venv\Scripts\python.exe -m uvicorn backend.api.main:app --host 127.0.0.1 --port 8001
 ```
 
 Luego abre: http://127.0.0.1:8001/
 
 ## Estructura añadida
 
-- `python-analysis/web/templates/` (Jinja2): `base.html`, `experiments.html`, `experiment_detail.html`.
-- `python-analysis/web/static/style.css` estilos simples.
+- `backend/web/templates/` (Jinja2): `base.html`, `experiments.html`, `experiment_detail.html`.
+- `backend/web/static/style.css` estilos simples.
 
 ## Actualización de datos
 

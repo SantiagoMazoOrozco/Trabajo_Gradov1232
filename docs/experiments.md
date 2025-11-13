@@ -24,6 +24,17 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_batch.ps1 -Repeats 10 -Se
 
 Esto corre 10 control y 10 treatment con distintas semillas, agrega y ejecuta análisis.
 
+### 2.1) Lote dual: Control (secuencial) vs Tratamiento (JADE)
+
+- PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_dual_batch.ps1 -Repeats 5 -SeedBase 42 -Package
+```
+
+Esto reutiliza el API en un solo proceso, ejecuta para cada repetición un experimento de control con `simulate_experiment.py` y uno de tratamiento vía los agentes JADE.
+Al finalizar ejecuta `aggregate_metrics.py` y `stats_analysis.py`, y si se pasa `-Package` genera `deliver/dual_batch_<timestamp>.zip` con agregados, estadísticos y manifiesto de los experimentos.
+
 ## 3) Agregar métricas
 
 ```powershell
@@ -103,3 +114,36 @@ Use la variable de entorno `API_BASE` si el servicio corre en otra dirección.
 - Mantén `.venv` activo y las dependencias de `requirements.txt` instaladas.
 - Usa `-Quiesce` y `-HighPriority` si buscas reducir ruido del sistema.
 - Ajusta `MonitorSeconds` para capturar suficiente señal en entrenamiento.
+
+## Quick commands (portable)
+
+Start the API (dashboard) with uvicorn on port 8001:
+
+```bash
+python3 -m uvicorn --app-dir backend api.main:app --host 127.0.0.1 --port 8001
+```
+
+Run a single simulated experiment pointing to the API:
+
+```bash
+API_BASE=http://127.0.0.1:8001 python3 python-analysis/simulate_experiment.py exp_mytest 42
+```
+
+Write only the `meta.json` for an experiment (useful before aggregation):
+
+```bash
+python3 python-analysis/simulate_experiment.py exp_meta_only 42 --write-meta-only --group treatment
+```
+
+Notes about the energy proxy:
+
+The code uses `CPU_POWER_W` (default 35 W) to estimate energy. To override for your hardware:
+
+```bash
+export CPU_POWER_W=65.0
+python3 -m uvicorn --app-dir backend api.main:app --host 127.0.0.1 --port 8001
+```
+
+CI
+
+There is a GitHub Actions workflow at `.github/workflows/ci.yml` that installs requirements and runs `pytest` (includes a small E2E smoke test).

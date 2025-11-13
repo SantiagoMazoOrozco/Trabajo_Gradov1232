@@ -59,7 +59,7 @@ function Start-Api {
     if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir | Out-Null }
     $script:apiLogPath = Join-Path $logsDir ("uvicorn_" + (Get-Date -Format "yyyyMMdd_HHmmss") + ".log")
     $script:apiErrPath = Join-Path $logsDir ("uvicorn_" + (Get-Date -Format "yyyyMMdd_HHmmss") + ".err.log")
-    $args = @("-m","uvicorn","python-analysis.api.main:app","--host",$ApiHost,"--port",$ApiPort,"--log-level","info")
+        $args = @("-m","uvicorn","backend.api.main:app","--host",$ApiHost,"--port",$ApiPort,"--log-level","info")
     $script:apiProcess = Start-Process -FilePath $script:pyExe -ArgumentList $args -RedirectStandardOutput $script:apiLogPath -RedirectStandardError $script:apiErrPath -PassThru -WindowStyle Hidden
     Start-Sleep -Milliseconds 300
     if ($HighPriority -and $script:apiProcess) {

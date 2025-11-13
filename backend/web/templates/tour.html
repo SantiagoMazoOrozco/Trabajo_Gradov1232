@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tour guiado</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; margin: 2rem; }
+    h1, h2 { margin: 0.2rem 0 0.6rem; }
+    section { margin-bottom: 1.6rem; }
+    code { background: #f4f4f4; padding: 0.15rem 0.35rem; border-radius: 4px; }
+    .card { border: 1px solid #dadada; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    a.button { display: inline-block; padding: 0.5rem 0.8rem; background: #0a84ff; color: #fff; border-radius: 6px; text-decoration: none; }
+    .hint { color: #555; }
+  </style>
+</head>
+<body>
+  <h1>Tour guiado</h1>
+  <p class="hint">Accesos directos y ejemplos para empezar rápido con el dashboard y la API.</p>
+
+  <section class="card">
+    <h2>1) Abrir Grafana</h2>
+    <p>
+      <a class="button" href="http://localhost:3000/" target="_blank">Abrir Grafana</a>
+      <br/><span class="hint">Usuario: <code>admin</code> / Contraseña: <code>admin</code> (por defecto)</span>
+    </p>
+    <p>
+      Dashboard recomendado: <strong>SMA Overview</strong>
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>2) Ver CPU / RAM / Watts</h2>
+    <ul>
+      <li>CPU: panel <em>CPU % (avg last train)</em></li>
+      <li>Memoria: panel <em>Mem Peak MB (last train)</em></li>
+      <li>Watts: <em>CPU Power (RAPL vs Proxy)</em> o <em>Avg Watts (last train)</em></li>
+    </ul>
+    <p class="hint">Si no ves datos, ejecuta un experimento para poblar las series.</p>
+  </section>
+
+  <section class="card">
+    <h2>3) Ejecutar un experimento</h2>
+    <p>
+      <a class="button" href="/control" target="_blank">Abrir panel de control</a>
+    </p>
+    <p>O lanzar directamente por API:</p>
+    <ul>
+      <li><a href="/trigger/run-single?group=control&seed=123" target="_blank">Single (control, seed=123)</a></li>
+      <li><a href="/trigger/run-single?group=treatment&seed=321" target="_blank">Single (treatment, seed=321)</a></li>
+      <li><a href="/trigger/run-batch?repeats=5&monitor=10" target="_blank">Batch (x5, monitor=10s)</a></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>4) Modo Live (tiempo real)</h2>
+    <ul>
+      <li><a href="/trigger/live-start?seconds=30" target="_blank">Iniciar Live (30s)</a></li>
+      <li><a href="/trigger/live-stop" target="_blank">Parar Live</a></li>
+    </ul>
+    <p class="hint">Observa en Grafana los paneles "Live Avg Watts" y "Live Records/s".</p>
+  </section>
+
+  <section class="card">
+    <h2>5) Exportar paneles como imágenes</h2>
+    <p>Usa el script <code>scripts/export_grafana_panels.sh</code> para generar PNGs en <code>docs/figures/</code>.</p>
+    <pre><code>bash scripts/export_grafana_panels.sh</code></pre>
+    <p class="hint">Requiere el plugin <code>grafana-image-renderer</code> y Grafana en <code>http://localhost:3000</code>.</p>
+  </section>
+
+  <section class="card">
+    <h2>6) Guías rápidas</h2>
+    <ul>
+      <li><a href="/data/docs/guia_visual_grafana.md" target="_blank">Guía visual de Grafana</a> (si está servida por el backend)</li>
+      <li><a href="/data/docs/como_correr_experimentos.md" target="_blank">Cómo correr experimentos</a></li>
+    </ul>
+  </section>
+
+</body>
+</html>

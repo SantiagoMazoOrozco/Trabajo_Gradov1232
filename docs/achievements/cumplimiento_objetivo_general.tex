@@ -1,0 +1,98 @@
+% Capítulo: Cumplimiento del Objetivo General (para \input en la tesis)
+% Nota: Este archivo no incluye preámbulo ni \begin{document}. Inserte con \input{docs/achievements/cumplimiento_objetivo_general.tex}
+
+\section*{Cumplimiento del Objetivo General}
+\noindent\textbf{Fecha:} 12 de noviembre de 2025\\
+
+\subsection*{Resumen ejecutivo}
+Se implementó un prototipo operativo que integra: (i) una plataforma de Sistemas Multiagente (JADE) para orquestación, (ii) un backend con métricas Prometheus (incluida energía bajo enfoque ``watts-first''), (iii) un pipeline de entrenamiento supervisado simulado (Random Forest y SVM) reproducible, (iv) agregación de resultados a CSV y (v) visualización con Grafana. La evidencia técnica y documental muestra que el objetivo general está \textbf{cumplido} para el alcance de prototipo.
+
+\subsection*{Objetivo general (declaración)}
+\emph{Diseñar e implementar un prototipo de arquitectura basada en Sistemas Multiagente (SMA) para evaluar la eficiencia computacional y la sostenibilidad energética durante el entrenamiento de algoritmos de Machine Learning supervisado de clasificación, en entornos simulados de analítica de datos.}
+
+\subsection*{Matriz de cumplimiento}
+\begin{tabular}{p{0.28\linewidth} p{0.52\linewidth} p{0.14\linewidth}}
+\toprule
+\textbf{Criterio} & \textbf{Evidencia principal} & \textbf{Estado}\\
+\midrule
+Arquitectura SMA integrada & \verb|scripts/run_jade_experiment.sh|, artefactos \verb|data/results/_jade_logs/*|, métricas de orquestación en \verb|backend/api/main.py| & Cumplido\\
+Entrenamiento supervisado (RF/SVM) simulado & \verb|python-analysis/generate_dataset.py|, \verb|simulate_experiment.py|, reportes \verb|report_run.py| & Cumplido\\
+Eficiencia computacional (tiempo/CPU/mem/throughput) & Métricas en \verb|/metrics| y agregación en \verb|aggregate_metrics.py| \,$\Rightarrow$\, \verb|aggregate_metrics.csv| & Cumplido\\
+Sostenibilidad energética (watts-first) & RAPL/powercap (si disponible) y proxy; \verb|train_avg_watts_last|, W/MB y W/registro & Cumplido\\
+Observabilidad y tableros & Prometheus (9090), Grafana (3000), dashboards versionados/importables & Cumplido\\
+Reproducibilidad & Dataset con hash y metadatos; eventos JSONL; scripts de smoke/experimentos y agregación & Cumplido\\
+\bottomrule
+\end{tabular}
+
+\subsection*{Resultados y evidencias clave}
+\begin{itemize}
+  \item CSV consolidado: \verb|data/results/aggregate_metrics.csv| con duración, CPU, memoria, throughput, \verb|avg_watts|, \verb|watts_per_mb|, \verb|watts_per_record| y Joules derivados.
+  \item Reportes por ejecución: \verb|data/results/<exp_id>/report/report.html| con cronología y métricas por etapa.
+  \item Métricas en vivo: endpoint \verb|/metrics| del backend con gauges de entrenamiento, energía y progreso.
+  \item Tableros: \verb|infra/compose/grafana/dashboards/*| y \verb|docs/grafana/thesis_minimal.json|.
+\end{itemize}
+
+\subsection*{Alcance y supuestos}
+\begin{itemize}
+  \item Alcance de prototipo: entrenamiento simulado (RF/SVM); RAPL directo cuando el hardware lo permite; proxy de potencia cuando no.
+  \item Reproducibilidad: semillas, dataset sintético y hash; orquestación trazable por eventos JSONL; scripts de inicio/ejecución/agregación documentados.
+\end{itemize}
+
+\subsection*{Arquitectura SMA y orquestación}
+\begin{itemize}
+  \item Plataforma multiagente sobre JADE y lanzador \verb|scripts/run_jade_experiment.sh| (clase \emph{org.gaia.sma.RunJade}).
+  \item Artefactos de orquestación: \verb|data/results/_jade_logs/agents.json|, \verb|messages.log| y \verb|events.jsonl|.
+  \item Backend expone métricas de orquestación/progreso en \verb|backend/api/main.py| (\verb|/metrics|): \verb|experiment_last_id|, \verb|experiment_current_stage_idx|, \verb|experiment_current_stage_elapsed_seconds|.
+\end{itemize}
+
+\subsection*{Entornos simulados y pipeline de entrenamiento}
+\begin{itemize}
+  \item Dataset reproducible: \verb|python-analysis/generate_dataset.py| $\Rightarrow$ \verb|data/raw/synthetic_classification.csv| y \verb|.meta.json| (SHA-256).
+  \item Simulación: \verb|python-analysis/simulate_experiment.py| (PREPROCESS $\rightarrow$ TRAIN\_RF/SVM $\rightarrow$ EVAL\_RF/SVM), eventos en \verb|logs/events.jsonl| y \verb|meta.json| por experimento.
+  \item Reporte: \verb|python-analysis/report_run.py| $\Rightarrow$ HTML por ejecución.
+\end{itemize}
+
+\subsection*{Eficiencia y sostenibilidad energética}
+\begin{itemize}
+  \item Eficiencia: tiempo de entrenamiento, CPU promedio, memoria pico, throughput (reg/s) y MB/s: \verb|train_*|.
+  \item Energía ``watts-first'': lectura RAPL (\verb|energy_uj|) para potencia instantánea (si disponible); proxy \verb|cpu_power_w_proxy = CPU_POWER_W × (cpu_avg/100)| como respaldo.
+  \item Agregación: \verb|python-analysis/aggregate_metrics.py| $\Rightarrow$ \verb|aggregate_metrics.csv| con \verb|avg_watts|, W/MB, W/registro y Joules derivados ($J = W\times s$).
+\end{itemize}
+
+\subsection*{Observabilidad y tableros (Grafana)}
+\begin{itemize}
+  \item Stack local: \verb|scripts/start_stack.sh| levanta Prometheus (9090) y Grafana (3000) según \verb|infra/compose/docker-compose.yml|.
+  \item Datasource: aprovisionado en \verb|infra/compose/provisioning/datasources/datasource.yml| (\verb|http://prometheus:9090|).
+  \item Dashboards: \verb|infra/compose/grafana/dashboards/{performance.json,energy.json,resilience.json}| y \verb|docs/grafana/thesis_minimal.json|.
+\end{itemize}
+
+\subsection*{Apéndice A — Metodología y definiciones métricas}
+\begin{itemize}
+  \item Entradas por ejecución: \verb|meta.json| (semillas, dataset, parámetros), \verb|logs/events.jsonl| (eventos), metrics \verb|/metrics| muestreadas.
+  \item Derivaciones (\verb|aggregate_metrics.py|): \verb|avg_watts| = media de potencia; \verb|watts_per_mb| = \verb|avg_watts|/MB; \verb|watts_per_record| = \verb|avg_watts|/registro; $J = W\times s$; $J/MB = J/\text{MB}$.
+\end{itemize}
+
+\subsection*{Apéndice B — Errores e incidencias}
+\begin{itemize}
+  \item Integración SMA sin artefactos: síntesis en \verb|run_jade_experiment.sh| para \verb|_jade_logs/*|.
+  \item RAPL no disponible/permisos: uso de proxy con \verb|CPU_POWER_W| (calibrable), documentado en \verb|docs/energy_plan.md|.
+  \item Prometheus en modo host: generación de \verb|prom_targets.json| con IP de \verb|docker0|.
+  \item Puertos ocupados: escaneo 8000..8010 y persistencia en \verb|_server_state/uvicorn_dashboard.json|.
+  \item Esquemas históricos \verb|energy_j_*|: normalización a watts y Joules derivados en el agregador.
+\end{itemize}
+
+\subsection*{Apéndice C — Amenazas a la validez}
+\begin{itemize}
+  \item Interna: calibración de \verb|CPU_POWER_W| para el proxy de potencia.
+  \item Constructo: interpretación de W/MB y W/registro depende de perfil de I/O y payload.
+  \item Externa: dataset sintético puede no generalizar a casos reales.
+  \item Instrumentación: muestreo de 1 s subestima picos; RAPL por paquete no incluye GPU/DRAM.
+\end{itemize}
+
+\subsection*{Apéndice D — Guía de ejecución reproducible}
+\begin{enumerate}
+  \item Iniciar stack (Prometheus + Grafana + backend): \verb|./scripts/start_stack.sh|.
+  \item Smoke test y generación de datos: \verb|./scripts/monitoring_smoke.sh|.
+  \item Ejecutar experimento completo (ejemplo): \verb|./scripts/run_experiment.sh --group control --monitor-seconds 60 --report|.
+  \item Agregar y analizar: \verb|./scripts/aggregate_metrics.sh|, \verb|./scripts/stats_analysis.sh| $\Rightarrow$ \verb|data/results/aggregate_metrics.csv|.
+\end{enumerate}

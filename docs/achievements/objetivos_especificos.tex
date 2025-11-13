@@ -1,0 +1,83 @@
+% Capítulo: Cumplimiento de Objetivos Específicos (para \input en la tesis)
+% Nota: Este archivo no incluye preámbulo ni \begin{document}. Inserte con \input{docs/achievements/objetivos_especificos.tex}
+
+\section*{Cumplimiento de Objetivos Específicos}
+\noindent\textbf{Fecha:} 12 de noviembre de 2025\\
+
+Este capítulo documenta, con formato de tesis, cómo se cumplieron los cuatro objetivos específicos del proyecto. Para cada objetivo se presenta: enunciado, enfoque, implementación, evidencia, métricas, incidencias y estado.
+
+\subsection*{Lista de objetivos}
+\begin{enumerate}
+  \item Modelar la arquitectura de un prototipo de SMA capaz de orquestar y gestionar fases clave del pipeline de ML supervisado de clasificación (ingesta, preprocesamiento, preparación de datos) en entornos simulados.
+  \item Implementar el prototipo de arquitectura SMA modelado, integrando al menos dos algoritmos representativos (Random Forest y SVM) para su ejecución durante la fase de entrenamiento, usando JADE como entorno multiagente.
+  \item Evaluar la eficiencia computacional y la sostenibilidad energética del prototipo SMA frente a una arquitectura centralizada, durante el entrenamiento, mediante la medición de tiempo, throughput, uso de CPU y memoria, y energía normalizada (J/MB) en escenarios simulados, controlados y replicables.
+  \item Analizar e interpretar los resultados para validar la eficiencia y sostenibilidad del SMA; sintetizar implicaciones técnicas, éticas y operativas; identificar desafíos, limitaciones y oportunidades de mejora.
+\end{enumerate}
+
+\subsection*{OE1 — Modelado de la arquitectura SMA}
+\textbf{Enunciado.} Modelar la arquitectura de un prototipo de SMA para orquestar el pipeline de ML supervisado en entornos simulados.\\
+\textbf{Enfoque.} Arquitectura JADE + Backend (FastAPI) con exposición de métricas; simulación de etapas PREPROCESS $\rightarrow$ TRAIN $\rightarrow$ EVAL con eventos JSONL.\\
+\textbf{Implementación.}
+\begin{itemize}
+  \item Documentación de arquitectura: \texttt{docs/architecture/architecture.md}, índice \texttt{docs/architecture/README.md}.
+  \item Puente con JADE: \texttt{docs/architecture/bridge\_jade.md}; protocolo de mensajes/eventos: \texttt{docs/architecture/message-protocol.md}.
+  \item Scripts: \texttt{scripts/run\_jade\_experiment.sh}, \texttt{scripts/start\_stack.sh}.
+\end{itemize}
+\textbf{Evidencia.} Artefactos de orquestación en \texttt{data/results/\_jade\_logs/*}; métricas de progreso en \texttt{backend/api/main.py} (\texttt{/metrics}).\\
+\textbf{Métricas.} \texttt{experiment\_last\_id}, \texttt{experiment\_current\_stage\_idx}, \texttt{experiment\_current\_stage\_elapsed\_seconds}.\\
+\textbf{Incidencias.} Síntesis de artefactos JADE cuando faltan; normalización de documentos movidos a \texttt{docs/architecture/*}.\\
+\textbf{Estado.} Cumplido.
+
+\subsection*{OE2 — Implementación con RF y SVM (JADE)}
+\textbf{Enunciado.} Implementar el prototipo SMA integrando Random Forest y SVM durante el entrenamiento con JADE.\\
+\textbf{Enfoque.} Dataset reproducible y simulación de PREPROCESS/ TRAIN\_RF/ EVAL\_RF/ TRAIN\_SVM/ EVAL\_SVM, registrando eventos JSONL; JADE opera y/o se sintetizan artefactos.\\
+\textbf{Implementación.}
+\begin{itemize}
+  \item Generador: \texttt{python-analysis/generate\_dataset.py} $\rightarrow$ \texttt{data/raw/synthetic\_classification.csv} y metadatos (SHA-256).
+  \item Simulación: \texttt{python-analysis/simulate\_experiment.py}; reportes: \texttt{python-analysis/report\_run.py}.
+  \item Plataforma JADE y lanzador: \texttt{agents/jade-platform/*}, \texttt{scripts/run\_jade\_experiment.sh}.
+\end{itemize}
+\textbf{Evidencia.} \texttt{data/results/\textless exp\_id\textgreater/} con \texttt{meta.json}, \texttt{logs/events.jsonl}, \texttt{report/report.html}.\\
+\textbf{Métricas.} \texttt{train\_duration\_seconds\_last\_by\_algo}, \texttt{train\_cpu\_avg\_percent\_last\_by\_algo}, \texttt{train\_mem\_peak\_mb\_last\_by\_algo}, \texttt{train\_records\_per\_s\_last\_by\_algo}.\\
+\textbf{Incidencias.} Variantes históricas \texttt{energy\_j\_*} normalizadas en \texttt{aggregate\_metrics.py}; CLASSPATH/JADE documentado en el script.\\
+\textbf{Estado.} Cumplido.
+
+\subsection*{OE3 — Evaluación de eficiencia y energía (SMA vs. centralizado)}
+\textbf{Enunciado.} Evaluar eficiencia y sostenibilidad del SMA frente a una arquitectura centralizada durante el entrenamiento, con métricas (tiempo, throughput, CPU, memoria, energía J/MB) en escenarios simulados y replicables.\\
+\textbf{Enfoque.} Comparación control (invocación directa) vs. tratamiento (orquestación) como proxy de arquitectura centralizada vs. SMA; dataset congelado y semillas controladas.\\
+\textbf{Implementación.}
+\begin{itemize}
+  \item Ejecuciones reproducibles: \texttt{scripts/monitoring\_smoke.sh} y \texttt{scripts/run\_experiment.sh}.
+  \item Agregación: \texttt{python-analysis/aggregate\_metrics.py} $\rightarrow$ \texttt{data/results/aggregate\_metrics.csv} con duración, CPU, memoria, throughput, \texttt{avg\_watts}, \texttt{watts\_per\_mb}, \texttt{watts\_per\_record} y Joules derivados (\\$J = W \times s\\$).
+  \item Observabilidad: Prometheus + Grafana (\texttt{infra/compose/*}); dashboards versionados; dashboard mínimo en \texttt{docs/grafana/thesis\_minimal.json}.
+\end{itemize}
+\textbf{Evidencia.} CSV por grupo/algoritmo; paneles de performance/energía; estado del backend en \texttt{data/results/\_server\_state/*}.\\
+\textbf{Métricas.} Eficiencia: \texttt{train\_duration\_seconds}, \texttt{train\_records\_per\_s\_last}, \texttt{train\_cpu\_avg\_percent\_last}, \texttt{train\_mem\_peak\_mb\_last}. Energía: \texttt{train\_avg\_watts\_last}, \texttt{watts\_per\_mb}, \texttt{watts\_per\_record}, derivación a \texttt{joules\_per\_mb}.\\
+\textbf{Incidencias.} RAPL inaccesible $\rightarrow$ proxy de potencia \texttt{cpu\_power\_w\_proxy} (calibrable con \texttt{CPU\_POWER\_W}); targets Prometheus en modo host y puertos ocupados resueltos por scripts.\\
+\textbf{Limitaciones.} La arquitectura “centralizada” se modela vía control vs. tratamiento; \texttt{joules\_per\_mb} se computa a partir de campos disponibles (posible añadir al CSV).\\
+\textbf{Estado.} Cumplido (en alcance de prototipo).
+
+\subsection*{OE4 — Análisis e interpretación de resultados}
+\textbf{Enunciado.} Analizar e interpretar resultados para validar la eficiencia y sostenibilidad del SMA; sintetizar implicaciones técnicas, éticas y operativas; identificar desafíos/limitaciones/oportunidades.\\
+\textbf{Enfoque.} Uso de CSV consolidado + reportes por ejecución + paneles de Grafana; discusión de amenazas a la validez y ética energética.\\
+\textbf{Implementación.}
+\begin{itemize}
+  \item Consolidación: \texttt{aggregate\_metrics.py} y \texttt{data/results/aggregate\_metrics.csv}; estadísticas: \texttt{stats\_analysis.py}.
+  \item Reportes por ejecución: \texttt{python-analysis/report\_run.py}.
+  \item Documentación de análisis y validez: \texttt{docs/achievements/cumplimiento\_objetivo\_general.md} (apéndices), \texttt{docs/monitoring\_spec.md}, \texttt{docs/energy\_plan.md}.
+\end{itemize}
+\textbf{Evidencia.} Comparaciones control/tratamiento por algoritmo; discusión de incidencias reales y amenazas a la validez.\\
+\textbf{Síntesis.} Técnicas (overhead vs. eficiencia; calibración de potencia), éticas (transparencia energética), operativas (scripts reproducibles, dashboards versionados).\\
+\textbf{Desafíos.} Integrar RAPL por ventana en CSV; exponer \texttt{joules\_per\_mb}; extender a datasets reales y cargas intensivas.\\
+\textbf{Estado.} Cumplido.
+
+\subsection*{Conclusión}
+Los cuatro objetivos específicos se encuentran cumplidos en el alcance de prototipo, con trazabilidad a código, scripts y artefactos, y con análisis cuantitativo y cualitativo suficiente para sustentar la evaluación de eficiencia y sostenibilidad.
+
+\subsection*{Referencias cruzadas}
+\begin{itemize}
+  \item Arquitectura: \texttt{docs/architecture/README.md}, \texttt{architecture.md}, \texttt{bridge\_jade.md}, \texttt{message-protocol.md}.
+  \item Observabilidad/energía: \texttt{docs/monitoring\_spec.md}, \texttt{docs/energy\_plan.md}, dashboards en \texttt{infra/compose/grafana/dashboards/}, \texttt{docs/grafana/README.md}.
+  \item Cumplimiento objetivo general: \texttt{docs/achievements/cumplimiento\_objetivo\_general.md}.
+  \item Pipelines/simulación/análisis: \texttt{python-analysis/*.py}, \texttt{scripts/*.sh}.
+\end{itemize}

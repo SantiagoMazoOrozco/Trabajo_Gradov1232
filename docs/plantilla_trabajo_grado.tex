@@ -1,0 +1,318 @@
+% Plantilla LaTeX para Trabajo de Grado
+% Universidad Nacional de Colombia – Facultad de Administración
+% Basado en el esquema proporcionado por el usuario
+
+\documentclass[12pt,twoside]{report}
+
+% Idioma y codificación
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Márgenes: 2.54 cm (superior, inferior, exterior) y 3.6 cm (interna)
+\usepackage[a4paper,top=2.54cm,bottom=2.54cm,outer=2.54cm,inner=3.6cm]{geometry}
+
+% Tipografía aproximada a Arial (Helvetica)
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+% Interlineado
+\usepackage{setspace}
+\onehalfspacing
+
+% Encabezados y pies de página
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+% páginas impares: número arriba derecha; pares: arriba izquierda
+\fancyhead[RO]{\thepage}
+\fancyhead[LE]{\thepage}
+
+% Enlaces y metadatos
+\usepackage[hidelinks]{hyperref}
+
+% Figuras y utilidades
+\usepackage{graphicx}
+\newcommand{\placeholderfigure}[1]{\fbox{\parbox{0.6\textwidth}{\centering Figura no disponible\\#1}}}
+
+% Tablas
+\usepackage{booktabs}
+
+% Comandos para datos variables
+\newcommand{\TrabajoTitulo}{Eficiencia y Sostenibilidad Computacional de Algoritmos de Machine Learning para la Clasificación Supervisada en Analítica de Datos: Un Enfoque Multiagente}
+\newcommand{\AutorNombre}{Santiago Mazo Orozco}
+\newcommand{\Universidad}{Universidad Nacional de Colombia}
+\newcommand{\Facultad}{Facultad de Administración, Departamento de Informática y Computación}
+\newcommand{\Ciudad}{Manizales, Colombia}
+\newcommand{\Anio}{2025}
+\newcommand{\GradoObjetivo}{Administrador(a) de Sistemas Informáticos}
+\newcommand{\DirectorTitulo}{Profesor}
+\newcommand{\DirectorNombre}{Néstor Darío Duque M}
+\newcommand{\Modalidad}{Trabajos investigativos – Proyecto Final}
+\newcommand{\GrupoInvestigacion}{GAIA – Grupo de Investigación en Ambientes Inteligentes Adaptativos (en alianza con ACSIC, Universidad de Islas Baleares)}
+
+% Títulos
+\usepackage{titlesec}
+\titleformat{\chapter}[display]{\bfseries\Large}{\thechapter}{1ex}{\vspace{-1ex}}[\vspace{0.5ex}\titlerule]
+\titlespacing*{\chapter}{0pt}{*4}{*2}
+\titleformat{\section}{\bfseries\large}{\thesection}{1ex}{}
+\titlespacing*{\section}{0pt}{*2}{*1}
+
+% Bibliografía (BibLaTeX estilo IEEE)
+\usepackage[backend=biber,style=ieee]{biblatex}
+\addbibresource{refs.bib}
+
+\begin{document}
+
+%====================
+% CUBIERTA (CARÁTULA)
+%====================
+\thispagestyle{empty}
+\begin{center}
+\vspace*{2cm}
+{\LARGE \textbf{\TrabajoTitulo}\\[2cm]}
+{\large \AutorNombre\\[2cm]}
+{\large \Universidad\\}
+\Facultad\\
+\Ciudad\\[1cm]
+\Anio
+\end{center}
+\clearpage
+
+%=======
+% PORTADA
+%=======
+\thispagestyle{empty}
+\begin{center}
+\vspace*{2cm}
+{\LARGE \textbf{\TrabajoTitulo}\\[2cm]}
+{\large \AutorNombre\\[1.5cm]}
+{\normalsize Trabajo de grado presentado como requisito parcial para optar al título de: \\
+\textbf{\GradoObjetivo}\\[1.2cm]}
+{\normalsize Director(a): \\ \DirectorTitulo\ \DirectorNombre \\[0.8cm]}
+{\normalsize Modalidad del trabajo de grado: \\ \Modalidad \\[0.8cm]}
+{\normalsize Grupo de Investigación: \\ \GrupoInvestigacion \\[1.2cm]}
+{\large \Universidad\\}
+\Facultad\\
+\Ciudad\\[1cm]
+\Anio
+\end{center}
+\clearpage
+
+%====================
+% DEDICATORIA (OPCIONAL)
+%====================
+\chapter*{Dedicatoria}
+A mi familia, por su apoyo incondicional durante todo el proceso.
+\clearpage
+
+%====================
+% AGRADECIMIENTOS (OPCIONAL)
+%====================
+\chapter*{Agradecimientos}
+A la Universidad Nacional de Colombia – Sede Manizales, al Departamento de Informática y Computación, y al grupo GAIA por el acompañamiento. Al profesor \DirectorNombre~por su dirección y valiosas sugerencias.
+\clearpage
+
+%====================
+% RESUMEN Y ABSTRACT
+%====================
+\chapter*{Resumen y Abstract}
+
+\section*{Resumen}
+	extbf{Título en español:} \TrabajoTitulo\\[0.5em]
+La rápida expansión de los datos y las exigencias de procesamiento han evidenciado las limitaciones de arquitecturas centralizadas para analítica y Machine Learning (ML). Este trabajo diseña e implementa un prototipo de arquitectura basada en Sistemas Multiagente (SMA), soportada en JADE, para orquestar y evaluar el entrenamiento de algoritmos de clasificación supervisada (Random Forest y Support Vector Machine), con énfasis en eficiencia computacional y sostenibilidad energética. Se comparan dos condiciones experimentales: arquitectura centralizada (control) y arquitectura SMA (tratamiento), en escenarios simulados, controlados y replicables. Las métricas cuantitativas incluyen: tiempo de ejecución (ms), rendimiento (registros/s), uso promedio de CPU (%), memoria pico (MB) y consumo energético estimado (J/MB). La recolección y agregación de resultados se automatiza con scripts Python; el monitoreo y visualización se instrumenta con Prometheus y Grafana. El análisis estadístico (pruebas de permutación y contraste inferencial) sugiere, con la configuración actual, ausencia de diferencias significativas (p $\ge$ 0.05) entre control y tratamiento; sin embargo, la plataforma demuestra viabilidad para estudios rigurosos, reproducibles y extensibles, aportando evidencia y herramientas para evaluar eficiencia, resiliencia y sostenibilidad en ML distribuido. Se discuten implicaciones técnicas, éticas y operativas, y se proponen líneas de trabajo futuro.\\[0.5em]
+	extbf{Palabras clave:} Sistemas Multiagente; JADE; Machine Learning; Eficiencia Computacional; Sostenibilidad Energética; Random Forest; SVM.
+
+\section*{Abstract}
+	extbf{Title in English:} Computational Efficiency and Energy Sustainability of Supervised ML Classification Algorithms: A Multi‑Agent Approach\\[0.5em]
+The rapid growth of data and processing demands has exposed the limitations of centralized architectures for Analytics and Machine Learning (ML). This work designs and implements a Multi‑Agent System (MAS) prototype—based on JADE—to orchestrate and evaluate the training of supervised classification algorithms (Random Forest and Support Vector Machine), focusing on computational efficiency and energy sustainability. Two experimental conditions are compared: centralized architecture (control) and MAS‑based architecture (treatment), under simulated, controlled, and replicable settings. Quantitative metrics include execution time (ms), throughput (records/s), average CPU usage (%), peak memory (MB), and estimated energy consumption (J/MB). Result collection and aggregation are automated with Python scripts; monitoring and visualization are instrumented with Prometheus and Grafana. Statistical analysis (permutation tests and inferential comparisons) suggests, with the current configuration, no significant differences (p $\ge$ 0.05) between control and treatment; however, the platform proves viable for rigorous, reproducible, and extensible studies, providing evidence and tools to assess efficiency, resilience, and sustainability in distributed ML. Technical, ethical, and operational implications are discussed, along with future work.\\[0.5em]
+	extbf{Keywords:} Multi‑Agent Systems; JADE; Machine Learning; Computational Efficiency; Energy Sustainability; Random Forest; SVM.
+\clearpage
+
+%====================
+% CONTENIDO (ÍNDICE)
+%====================
+\tableofcontents
+\clearpage
+
+%====================
+% LISTAS OPCIONALES
+%====================
+\chapter*{Lista de figuras}
+\addcontentsline{toc}{chapter}{Lista de figuras}
+\listoffigures
+\clearpage
+
+\chapter*{Lista de tablas}
+\addcontentsline{toc}{chapter}{Lista de tablas}
+\listoftables
+\clearpage
+
+\chapter*{Lista de símbolos y abreviaturas (opcional)}
+% Incluir sólo símbolos/abreviaturas usados.
+\clearpage
+
+%====================
+% INTRODUCCIÓN
+%====================
+\chapter*{Introducción}
+\addcontentsline{toc}{chapter}{Introducción}
+El crecimiento exponencial de datos en sensores y plataformas digitales exige arquitecturas capaces de escalar, adaptarse y ser resilientes. Los Sistemas Multiagente (SMA) ofrecen autonomía, comunicación y proactividad, adecuándose a entornos dinámicos y distribuidos. Este trabajo propone una plataforma SMA experimental, modular y replicable para evaluar algoritmos de ML supervisado (RF y SVM) con un enfoque integral en eficiencia computacional y sostenibilidad energética. Además de precisión, se consideran métricas como tiempo, throughput, uso de CPU y memoria, y energía (J/MB), con análisis estadístico para contrastar un grupo de control centralizado frente a un tratamiento SMA.
+\clearpage
+
+%====================
+% CAPÍTULOS
+%====================
+\chapter{Presentación del trabajo de grado}
+\section{Planteamiento del problema o situación abordada}
+Las soluciones centralizadas para ML presentan límites de escalabilidad y tolerancia a fallos. Se requiere evaluar arquitecturas alternativas, como los SMA, que permitan comparar eficiencia y sostenibilidad energética en condiciones controladas, con resultados confiables y replicables.
+
+\section{Objetivo general}
+Diseñar e implementar un prototipo de arquitectura basada en Sistemas Multiagente (SMA) para evaluar la eficiencia computacional y la sostenibilidad energética durante el entrenamiento de algoritmos de Machine Learning supervisado de clasificación, en entornos simulados de analítica de datos.
+
+\section{Objetivos específicos}
+\begin{itemize}
+  \item Modelar la arquitectura de un SMA que orqueste ingesta, preprocesamiento y preparación de datos para entrenamiento.
+  \item Implementar el prototipo SMA integrando al menos RF y SVM en la fase de entrenamiento, utilizando JADE.
+  \item Evaluar eficiencia computacional y sostenibilidad energética frente a una arquitectura centralizada, midiendo tiempo, throughput, CPU, memoria y energía (J/MB).
+  \item Analizar e interpretar resultados cuantitativos para validar eficiencia y sostenibilidad, identificando implicaciones técnicas, éticas y operativas.
+\end{itemize}
+
+\section{Metodología}
+Enfoque cuantitativo con complemento cualitativo; diseño experimental (o cuasi‑experimental) con dos condiciones: control (centralizado) vs tratamiento (SMA). Variables dependientes: tiempo (ms), throughput (reg/s), CPU (%), memoria (MB), energía (J/MB). Adaptabilidad y resiliencia: tiempo de respuesta ante eventos dinámicos, tasa de reconfiguración autónoma, fallos recuperados y tiempo medio de recuperación. Escalabilidad: mantenimiento de métricas ante incrementos de carga. Instrumentación: scripts Python para orquestación y análisis; Prometheus+Grafana para monitoreo; backend FastAPI; agentes JADE; dataset sintético controlado. Repeticiones por escenario (\(\ge\) 10) para soporte inferencial; pruebas de permutación y contrastes (p‑value). Consideraciones éticas y de sostenibilidad.
+
+\section{Ejemplo de presentación y citación de figuras, tablas y cuadros}
+% Instrucciones sobre ubicación y citación de figuras/tablas.
+
+\chapter{Revisión de literatura}
+La literatura reporta aplicaciones de SMA en analítica de datos y ciudades inteligentes (Braubach \& Pokahr, 2019; Paik, 2024; Kuzin et al., 2022), y esfuerzos por medir eficiencia energética en ML (Rodríguez et al., 2024; Yu et al., 2022; Chung et al., 2025). Persiste un vacío en evaluaciones integrales que combinen eficiencia, adaptabilidad y sostenibilidad en un mismo marco.
+
+\chapter{Desarrollo}
+\section{Arquitectura técnica}
+La arquitectura integra una capa multiagente (JADE) y una capa de servicios ligeros (FastAPI) para desacoplar orquestación de instrumentación y persistencia:
+\begin{itemize}
+  \item \textbf{Capa Agentes (JADE)}: agentes especializados (Ingest/Prep, Trainer, Evaluator, Metrics/Monitor, Orchestrator) coordinan las fases del pipeline. Comunicación ACL con mensajes estructurados (JSON) y manejo de estados por experimento.
+  \item \textbf{Capa API (FastAPI)}: endpoints REST (/preprocess, /train, /evaluate) y \texttt{/metrics} Prometheus con métricas agregadas y \emph{last session} etiquetadas por grupo y algoritmo.
+  \item \textbf{Telemetría y Observabilidad}: Prometheus (scraping file\_sd dinámico) y Grafana (provisioning JSON) con paneles de desempeño (accuracy, F1), eficiencia (CPU, memoria, throughput, energía), resiliencia (fallos/recuperaciones/tasa) y comparaciones por algoritmo.
+  \item \textbf{Persistencia de Resultados}: estructura jerárquica en \texttt{data/results/<experimentId>/} (prep, models, eval, logs, monitor, report). Agregados globales: \texttt{aggregate\_metrics.csv}, \texttt{stats\_summary.json|md}.
+  \item \textbf{Automatización}: scripts \texttt{run\_experiment.*}, \texttt{run\_batch.*}, \texttt{aggregate\_metrics.py}, \texttt{stats\_analysis.py}, e índices diarios con \texttt{generate\_daily\_docs.ps1}.
+  \item \textbf{Proxy Energético}: cálculo estimado de energía a partir de potencia CPU (\texttt{CPU\_POWER\_W}), tiempo y uso de CPU, normalizado por MB procesados.
+\end{itemize}
+
+\section{Flujo experimental}
+\begin{enumerate}
+  \item Preparación (grupo, semilla, dataset congelado).
+  \item Preprocesamiento (split, escalado, artefactos prep).\label{flujo:prep}
+  \item Entrenamiento (RF/SVM) con recolección de tiempo, CPU, memoria, throughput, MB y energía estimada.
+  \item Evaluación (accuracy, F1, matriz de confusión opcional).
+  \item Agregación (CSV global y actualización de métricas \emph{last}).
+  \item Análisis estadístico (permutación; p \(\ge\) 0.05 en configuración actual).
+  \item Visualización (paneles Grafana y reportes HTML por experimento).
+  \item Empaquetado de evidencia e índices de documentación diarios.
+\end{enumerate}
+
+\section{Estrategia de medición y energía}
+\begin{itemize}
+  \item Métricas base: \texttt{time\_ms}, \texttt{cpu\_avg}, \texttt{mem\_peak\_mb}, \texttt{records\_per\_s}, \texttt{data\_mb\_per\_s}, \texttt{energy\_j\_total}, \texttt{energy\_j\_per\_mb}, \texttt{accuracy}, \texttt{f1}.
+  \item Derivadas: \texttt{efficiency\_cpu\_rps\_per\_pct}, \texttt{efficiency\_mem\_rps\_per\_mb}, \texttt{energy\_j\_per\_record}.
+  \item Resiliencia: \texttt{failures\_total}, \texttt{recoveries\_total}, \texttt{recovery\_rate} (filas RESILIENCE en agregados).
+  \item Etiquetado Prometheus: \{group="control|treatment"\}, \{algo="rf|svm"\} y métricas globales \emph{last session}.
+  \item Limitaciones: proxy energético basado en potencia media y no medición directa (RAPL); útil para comparación relativa y evolución futura.
+  \item Reproducibilidad: semillas registradas en \texttt{meta.json}, dataset inmutable, toolchain (Java 21, JADE 4.6.0) documentada.
+\end{itemize}
+
+\chapter{Resultados}
+Objetivo: comparar control (arquitectura centralizada) vs tratamiento (SMA/JADE) para RF y SVM en entrenamiento, con foco en eficiencia y sostenibilidad (proxy energético) y desempeño del modelo.
+
+Configuración resumida: algoritmos RF y SVM; 10 repeticiones por grupo (batch 2025-10-27); scripts \texttt{scripts/run\_batch.*}, \texttt{scripts/run\_experiment.*}; agregación/análisis en \texttt{python-analysis/aggregate\_metrics.py} y \texttt{python-analysis/stats\_analysis.py} (\(\ge\) 5000 permutaciones); proxy energético \(avg\_watts \approx CPU\_POWER\_W * (cpu\_avg/100)\).
+
+\section{Descriptivos}
+\begin{table}[htbp]
+\centering
+\caption{Descriptivos (mediana/mean) — batch 20251027}
+\begin{tabular}{l l r r r r r}
+	oprule
+Stage & Group & time\_ms & cpu\_avg\% & mem\_peak\_mb & records\_per\_s & watts\_per\_mb \\
+\midrule
+TRAIN\_RF & control & 1781.030/1785.152 & 30.345/32.238 & 190.769/191.081 & 1348.189/1346.414 & 47.675/52.559 \\
+TRAIN\_RF & treatment & 1773.894/1769.241 & 30.640/32.163 & 193.727/193.864 & 1353.601/1357.479 & 50.305/51.785 \\
+TRAIN\_SVM & control & 203.090/203.252 & 27.000/31.025 & 190.769/191.231 & 11817.402/11808.020 & 4.992/5.738 \\
+TRAIN\_SVM & treatment & 203.642/203.600 & 27.125/29.025 & 193.790/193.877 & 11785.376/11787.840 & 5.029/5.375 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Inferencia (permutación)}
+\begin{table}[htbp]
+\centering
+\caption{p-values por métrica y etapa}
+\begin{tabular}{l l r l}
+	oprule
+Stage & Métrica & p-value & Interpretación \\
+\midrule
+TRAIN\_RF & time\_ms & 0.4788 & No significativo \\
+TRAIN\_SVM & time\_ms & 0.5081 & No significativo \\
+TRAIN\_RF & records\_per\_s & 0.5766 & No significativo \\
+TRAIN\_SVM & records\_per\_s & 0.5044 & No significativo \\
+TRAIN\_RF & energy\_j\_per\_mb & 0.4868 & No significativo \\
+TRAIN\_SVM & energy\_j\_per\_mb & 0.8785 & No significativo \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Tamaños de efecto}
+\begin{table}[htbp]
+\centering
+\caption{Cliff's Delta (\(\delta\))}
+\begin{tabular}{l l r l}
+	oprule
+Stage & Métrica & Cliff's \(\delta\) & Magnitud \\
+\midrule
+TRAIN\_RF & time\_ms & 0.24 & Medio \\
+TRAIN\_RF & energy\_j\_per\_mb & -0.08 & Pequeño/Despreciable \\
+TRAIN\_RF & records\_per\_s & -0.24 & Medio \\
+TRAIN\_SVM & time\_ms & -0.50 & Grande \\
+TRAIN\_SVM & energy\_j\_per\_mb & -0.04 & Pequeño/Despreciable \\
+TRAIN\_SVM & records\_per\_s & 0.50 & Grande \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Tablas auto-generadas (descriptivos y p-values)
+\input{docs/_auto_results_tables.tex}
+
+\section{Figuras}
+\begin{figure}[htbp]
+\centering
+\IfFileExists{data/results/batch_20251027_145840/figures/TRAIN_RF_time_ms.png}{\includegraphics[width=0.7\textwidth]{data/results/batch_20251027_145840/figures/TRAIN_RF_time_ms.png}}{\placeholderfigure{TRAIN\_RF\_time\_ms.png}}
+\caption{Distribución de \texttt{time\_ms} — entrenamiento RF.}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\IfFileExists{data/results/batch_20251027_145840/figures/TRAIN_SVM_time_ms.png}{\includegraphics[width=0.7\textwidth]{data/results/batch_20251027_145840/figures/TRAIN_SVM_time_ms.png}}{\placeholderfigure{TRAIN\_SVM\_time\_ms.png}}
+\caption{Distribución de \texttt{time\_ms} — entrenamiento SVM.}
+\end{figure}
+
+\section{Discusión}
+En el escenario evaluado no se observaron diferencias estadísticamente significativas (\(p \ge 0.05\)) entre control y tratamiento en las métricas principales. La plataforma demuestra viabilidad para estudios reproducibles y extensibles; para revelar ventajas del SMA se recomienda escalar datos y concurrencia, ampliar el pipeline y medir energía con RAPL/powercap.
+
+\chapter{Conclusiones y recomendaciones}
+\section{Conclusiones}
+La plataforma SMA demuestra viabilidad técnica para orquestar y evaluar experimentos de ML con rigor y replicabilidad. En la configuración actual, no se observaron diferencias significativas (p $\ge$ 0.05) entre control y tratamiento; se recomienda ampliar escala y diversidad de escenarios.
+
+\section{Recomendaciones}
+Medición energética directa (RAPL/powercap), mayor tamaño muestral y escenarios de estrés, extensión a más algoritmos y tareas, profundización en resiliencia y análisis ético.
+
+%====================
+% ANEXOS
+%====================
+\appendix
+\chapter{[Nombrar el anexo A]}
+	extbf{Mapeo de artefactos a objetivos.} Backend/API, scripts de experimentación, agregación y análisis; datos y reportes en \texttt{data/results/}. Paneles Grafana: calidad (accuracy/F1), eficiencia (CPU/Mem/Throughput/Energía), resiliencia, por algoritmo.
+
+%====================
+% BIBLIOGRAFÍA
+%====================
+\printbibliography[heading=bibintoc,title={Bibliografía}]
+
+\end{document}

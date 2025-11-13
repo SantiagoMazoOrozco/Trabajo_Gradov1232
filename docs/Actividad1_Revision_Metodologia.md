@@ -22,7 +22,7 @@ Observación: Las referencias están consolidadas; si se requiere un estilo espe
   - docs/experiments.md: ejecución individual y por lotes; agregación y análisis estadístico.
   - python-analysis/stats_analysis.py: pruebas de permutación por etapa/métrica (tiempo, energía/MB, accuracy, f1, y throughput).
   - scripts/run_experiment.ps1 / scripts/run_batch.ps1: orquestación reproducible, grupos control vs. treatment, semillas.
-  - python-analysis/api/main.py: cálculo de métricas de eficiencia y energía.
+  - backend/api/main.py (antes python-analysis/api/main.py): cálculo de métricas de eficiencia y energía.
   - python-analysis/aggregate_metrics.py / report_run.py: agregación y reporte por experimento.
   - UI Web: navegación de resultados (`/`, `/experiments/{id}`) — docs/web_ui.md.
 

@@ -1,0 +1,51 @@
+% Cumplimiento del Cronograma (Actividades 1--8)
+\chapter{Cumplimiento del Cronograma}
+\label{chap:cumplimiento-cronograma}
+
+Este capítulo resume \textit{cómo} se ejecutó cada actividad del cronograma y \textit{por qué} se logró satisfactoriamente, con referencias a la evidencia en el repositorio.
+
+\section*{Resumen}
+Todas las actividades (1--8) se marcaron como COMPLETADAS (ver `docs/Macroproceso.txt`, Registro de cumplimiento).
+
+\section{Actividad 1: Revisión de Literatura y Definición de Metodología}
+\textbf{Cómo}: Revisión sistemática y análisis documental; definición de enfoque mixto, diseño (experimental/cuasi) y operacionalización (VI/VD, energía J/MB). Redacción de metodología.\\
+\textbf{Por qué}: Objetivos claros y alineados al Macroproceso; especificaciones internas de monitoreo/energía/arquitectura.\\
+\textbf{Evidencia}: `docs/achievements/metodologia.{md,tex}`, `docs/monitoring_spec.md`, `docs/energy_plan.md`, `docs/architecture/README.md`.
+
+\section{Actividad 2: Diseño de la Arquitectura del SMA y del Experimento}
+\textbf{Cómo}: Modelado de agentes e interacciones; puente JADE; flujo PREPROCESS$\to$TRAIN$\to$EVAL; observabilidad con Prometheus/Grafana; Compose y smoke tests.\\
+\textbf{Por qué}: Modularidad y separación de preocupaciones; infraestructura y dashboards versionados.\\
+\textbf{Evidencia}: `docs/architecture/*`, `infra/compose/*`, `docs/grafana/README.md`, `docs/grafana/thesis_minimal.json`.
+
+\section{Actividad 3: Implementación y Desarrollo de Prototipos}
+\textbf{Cómo}: Orquestador JADE; backend FastAPI con métricas; entrenamiento RF/SVM; scripts de ejecución y simulación.\\
+\textbf{Por qué}: Integración clara entre agentes, backend y telemetría; toolchain reproducible.\\
+\textbf{Evidencia}: `agents/jade-platform/*`, `backend/api/main.py`, `python-analysis/simulate_experiment.py`, `scripts/run_experiment.*`, `scripts/run_batch.*`, `scripts/monitoring_smoke.sh`.
+
+\section{Actividad 4: Recolección y Pre-procesamiento de Datos Experimentales}
+\textbf{Cómo}: Dataset sintético reproducible; corridas control/tratamiento; registro de meta y eventos; consolidación en CSV.\\
+\textbf{Por qué}: Procedimientos estandarizados y estructura de resultados por ejecución/lote.\\
+\textbf{Evidencia}: `python-analysis/generate_dataset.py`, `data/raw/*`, `data/results/<exp_id>/*`, `python-analysis/aggregate_metrics.py`, `data/results/aggregate_metrics.csv`.
+
+\section{Actividad 5: Análisis e Interpretación de Datos}
+\textbf{Cómo}: Agregación y análisis estadístico (descriptivo e inferencial); reportes HTML y resúmenes.\\
+\textbf{Por qué}: Pipeline analítico versionado y reproducible; métricas homogéneas y normalizadas.\\
+\textbf{Evidencia}: `python-analysis/aggregate_metrics.py`, `python-analysis/stats_analysis.py`, `data/results/aggregate_metrics.csv`, `data/results/stats_summary.{json,md}`, `python-analysis/report_run.py`.
+
+\section{Actividad 6: Visualización de Hallazgos y Elaboración de Modelos}
+\textbf{Cómo}: Dashboards Grafana (CPU/Mem/Throughput/Energía/progreso); guía de uso; figuras para tesis.\\
+\textbf{Por qué}: Dashboards/datasource versionados y métrica en tiempo real.\\
+\textbf{Evidencia}: `docs/grafana/README.md`, `docs/grafana/thesis_minimal.json`, `docs/grafana/img/*`, `python-analysis/generate_thesis_figures.py`.
+
+\section{Actividad 7: Redacción del Reporte de Resultados}
+\textbf{Cómo}: Redacción de capítulos (MD + LaTeX) con evidencias, incidencias y validez; integración de resultados y gráficos.\\
+\textbf{Por qué}: Base analítica consolidada; flujo reproducible y activos versionados.\\
+\textbf{Evidencia}: `docs/thesis_results_section.{md,tex}`, `docs/achievements/cumplimiento_objetivo_general.{md,tex}`, `docs/achievements/objetivos_especificos.{md,tex}`.
+
+\section{Actividad 8: Consolidación de Conclusiones, Implicaciones y Trabajos Futuros}
+\textbf{Cómo}: Síntesis de hallazgos; discusión de limitaciones, amenazas a la validez e implicaciones; roadmap.\\
+\textbf{Por qué}: Evidencia cuantitativa/cualitativa suficiente y documentación continua.\\
+\textbf{Evidencia}: `docs/conclusions_implications_future_work.md`, `docs/future_work_roadmap.md`, `docs/resilience_test_scenarios.md`.
+
+\section*{Factores transversales de éxito}
+Planificación y trazabilidad; reproducibilidad (scripts/datos); observabilidad (Prometheus/Grafana); normalizaciones energéticas (watts-first, J/MB).

@@ -1,0 +1,54 @@
+% Auto-generated tables (do not edit manually) 
+% Auto-generated: Descriptive stats
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{llrrrrr}
+Stage & Group & time\_ms (med/mean) & cpu\_avg\% (med/mean) & mem\_peak\_mb (med/mean) & records\_per\_s (med/mean) & watts\_per\_mb (med/mean) \
+\hline
+ TRAIN\_RF & control & 1781.030/1785.152 & 30.345/32.238 & 190.769/191.081 & 1348.189/1346.414 & 47.675/52.559 \
+ TRAIN\_RF & treatment & 1773.894/1769.241 & 30.640/32.163 & 193.727/193.864 & 1353.601/1357.479 & 50.305/51.785 \
+ TRAIN\_SVM & control & 203.090/203.252 & 27.000/31.025 & 190.769/191.231 & 11817.402/11808.020 & 4.992/5.738 \
+ TRAIN\_SVM & treatment & 203.642/203.600 & 27.125/29.025 & 193.790/193.877 & 11785.376/11787.840 & 5.029/5.375 \
+\end{tabular}
+\caption{Descriptivos (medianas/medias) del batch balanceado 2025-10-27 por etapa y grupo.}
+\label{tab:descriptive_batch_20251027}
+\end{table}
+
+% Auto-generated: Permutation p-values
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{llrl}
+Stage & Metrica & p-value & Interpretacion \
+\hline
+TRAIN\_RF & time\_ms & 0.3627 & No significativo \
+TRAIN\_SVM & time\_ms & 0.9098 & No significativo \
+TRAIN\_RF & records\_per\_s & 0.4727 & No significativo \
+TRAIN\_SVM & records\_per\_s & 0.9462 & No significativo \
+\end{tabular}
+\caption{p-values por permutacion (control vs treatment) en el batch balanceado 2025-10-27.}
+\label{tab:pvalues_batch_20251027}
+\end{table}
+
+% Auto-generated: Cliff's delta
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{llrl}
+Stage & Metrica & Cliff's $\delta$ & Magnitud \
+\hline
+TRAIN\_RF & time\_ms & 0.24 & Pequeno \
+TRAIN\_RF & energy\_j\_per\_mb & -0.08 & Despreciable \
+TRAIN\_RF & records\_per\_s & -0.24 & Pequeno \
+TRAIN\_SVM & time\_ms & -0.50 & Grande \
+TRAIN\_SVM & energy\_j\_per\_mb & -0.04 & Despreciable \
+TRAIN\_SVM & records\_per\_s & 0.50 & Grande \
+EVAL\_RF & accuracy & 0.00 & Despreciable \
+EVAL\_RF & f1 & 0.00 & Despreciable \
+EVAL\_SVM & accuracy & 0.00 & Despreciable \
+EVAL\_SVM & f1 & 0.00 & Despreciable \
+\end{tabular}
+\caption{Cliff's $\delta$ por etapa/metricas (batch 2025-10-27).}
+\label{tab:cliffs_batch_20251027}
+\end{table}

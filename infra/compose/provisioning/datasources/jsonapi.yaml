@@ -1,0 +1,12 @@
+apiVersion: 1
+
+datasources:
+- name: API State
+  uid: api-state
+  type: marcusolsson-json-datasource
+  access: proxy
+  url: http://backend:8000
+  isDefault: false
+  editable: true
+  jsonData:
+    httpMethod: GET
